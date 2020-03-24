@@ -1,0 +1,20 @@
+Package: submitr
+Type: Package
+Title: Handles submissions to a database of events in R sessions.
+Version: 0.2.0
+Author: Daniel Kaplan
+Maintainer: Daniel Kaplan <kaplan@macalester.edu>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.5.0),
+         learnr
+Imports: googledrive,
+         googlesheets4,
+         jsonlite,
+         shiny,
+         knitr
+RoxygenNote: 7.0.2
+VignetteBuilder: knitr
