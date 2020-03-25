@@ -6,12 +6,12 @@
 submitr_env  <-  new.env()
 
 store_ID <- function(str) {
-  if(is.null(str)) str <- ".initializing."
+  if(is.null(str)) str <- "anonymous"
   submitr_env$user_ID <- str
 }
 
 get_ID  <- function() {
-  if (is.null(submitr_env$user_ID))  ".initializing"
+  if (is.null(submitr_env$user_ID))  "anonymous"
   else submitr_env$user_ID
 }
 

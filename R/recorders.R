@@ -28,6 +28,19 @@ make_recorder <- function(store_fun = cat_event()) {
                   event, data) {
     cat("in top-level  recorder\n")
 
+
+    # Put the elements of data into a data frame with always
+    # the same names
+    data$video_time <- data$time # give it a better name
+    data_names <- c("label", "question", "answer", "id",
+                    "correct", "code", "index", "reset",
+                    "sectionId", "video_url", "video_time")
+    data_in_standard_format <- list()
+    data_in_standard_format[data_names] <- NA
+    actual_names <- intersect(data_names, names(data))
+    data_in_standard_format[actual_names] <- data[actual_names]
+
+
     this_event <-
       data.frame(time = date(), user_id = user_id,
                  session_id = session_id,
@@ -35,15 +48,14 @@ make_recorder <- function(store_fun = cat_event()) {
                  event = event,
                  tutorial_id = tutorial_id,
                  tutorial_version = tutorial_version,
-                 chunk_label = ifelse(is.null(data$label), "", data$label),
-                 submission = capture.output(data$answer),
-                 correct = ifelse(is.null(data$correct), "", data$correct),
-                 details = as.character(jsonlite::toJSON(data)),
+                 # chunk_label = ifelse(is.null(data$label), "", data$label),
+                 # submission = capture.output(data$answer),
+                 # correct = ifelse(is.null(data$correct), "", data$correct),
                  stringsAsFactors = FALSE)
 
     # Don't store the output of chunks -- it can be arbitrarily long.
     if  ( ! event %in% c("exercise_result")) {
-      store_fun(this_event)
+      store_fun(cbind(this_event, data_in_standard_format))
     }
 
     #  Return something to indicate success?
@@ -61,23 +73,60 @@ in_google_sheets  <-  function(key) {
   # Authorize the request
   googledrive::drive_auth(cache = ".secrets")#,  email = email)
   googlesheets4::sheets_auth(token = googledrive::drive_token())
-  function(this_event) {
-    cat("In google sheets recorder\n")
+  write <- function(this_event) {
     suppressMessages(
       googlesheets4::sheets_append(
         this_event,
         key)
     )
   }
+  read_submissions <- function(fname) {
+    contents <- googlesheets4::sheets_read(key)
+    write.csv(contents, file = fname, row.names=FALSE)
+  }
+
+  list(write = write, read_submissions = read_submissions)
 }
+
+# Write to a local  file
+#' @export
+in_local_file <- function(key) {
+  append_to_file <- TRUE # this is the permanent value
+
+  write <- function(this_event) {
+    if (!file.exists(key)) {
+      # create a new file
+      # And some logic to put in the column names the
+      # first time  the created function  is called.
+      append_to_file <- FALSE #  this is a temporary copy
+    }
+cat("Appending to file:", append_to_file, "\n")
+    write.table(this_event, file = key, sep = ",",
+                append = append_to_file, quote = TRUE,
+                qmethod  = "escape",
+                col.names = !append_to_file, row.names = FALSE)
+  }
+  read_submissions <- function(fname) { # return a local file name
+    file.copy(key, fname, overwrite =  TRUE)
+  }
+
+  list(write = write, read_submissions = read_submissions)
+}
+
 # Display the event in the console
 #' @export
 cat_event <- function(key) {
-  function(this_event) {
+  write <- function(this_event) {
     cat("Submission event from  user", this_event$markr_id,
         "in session", this_event$session_id ,"\n")
     cat("\tchunk label:", this_event$chunk_label,
         ":: correct:", this_event$correct, "\n")
     cat(this_event$submission, "\n\n")
   }
+  read_submissions <-  function(fname) {
+    cat("'Reading' the store. Since this is cat(), we have  nothing.",
+        file = fname)
+  }
+
+  list(write = write, read_submissions = read_submissions)
 }

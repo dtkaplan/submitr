@@ -24,7 +24,9 @@ question_ui_initialize.learnr_userid <- function(question, value, ...) {
 #'
 #' @export
 question_is_valid.learnr_userid <- function(question, value, ...) {
-  (! is.null(value)) &&  nchar(value)  > 4
+  # No strong reason for this. 4 is the  shortest valid
+  # userID::password string.
+  (! is.null(value)) &&  nchar(value)  >= 4
 }
 
 #' @export
