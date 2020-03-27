@@ -1,0 +1,18 @@
+```{r}
+secret_word <- "hello"
+textInput("grader_password", "For grading only")
+conditionalPanel(
+  condition =
+    paste0("input.grader_password == '", secret_word, "'"),
+  downloadLink("get_submissions",  label="Download submissions")
+)
+```
+
+```{r context = "server"}
+output$get_submissions <- downloadHandler(
+  filename = function() {
+    paste0("submissions-", Sys.Date(), ".csv")
+  },
+  content = storage_actions$read_submissions
+)
+```

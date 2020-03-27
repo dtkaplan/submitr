@@ -9,12 +9,15 @@ Description: More about what it does (maybe more than one line)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.5.0),
-         learnr
-Imports: googledrive,
+Depends: R (>= 3.5.0)
+Imports: learnr,
+         googledrive,
          googlesheets4,
          jsonlite,
          shiny,
          knitr
+Extends: learnr
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr
+Suggests: 
+    rmarkdown

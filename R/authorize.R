@@ -11,7 +11,9 @@
 #' See also `in_google_sheets(storage_sheet_key)`.
 #'
 #' @param placeholder Character string giving instructions to user.
-
+#'
+#' @param shared A logical flag (default TRUE) applicable only when the
+#' credentials file is stored as a universally readable google spreadsheet.
 #'
 #' @importFrom googlesheets4 sheets_auth sheets_append sheets_read
 #' @importFrom googledrive drive_auth drive_token
@@ -31,23 +33,41 @@
 authorize_submissions <- function(
   credentials,
   recorder = cat_event(),
-  placeholder = "Enter ID here in format user_name::password"
+  placeholder = "Enter ID here in format user_name::password",
+  shared = TRUE
   ) {
 
   #  set up the event handler
   options(tutorial.event_recorder =
             make_recorder(recorder))
 
+  passwd_df <- NULL
+
+
   if (is.data.frame(credentials)) {
     passwd_df = credentials
   } else if (file.exists(credentials)) {
     passwd_df = read.csv(credentials)
   } else {
-    # read the passwords from a file named by
+    if (shared) {
+      googledrive::drive_deauth() # use an open credentials sheet
+      passwd_df <- sheets_read(credentials)
+    }
+    # read the passwords from a Google sheet identified by <credentials>
+    if (file.exists(".secrets")) {
     googledrive::drive_auth(cache = ".secrets")#,  email = email)
     googlesheets4::sheets_auth(token = googledrive::drive_token())
+    } else {
+      googledrive::drive_deauth() # use an open credentials file.
+    }
+  }
+
+  # Get the credentials file if it hasn't been gotten already
+  # by some other means.
+  if (is.null(passwd_df)) {
     suppressMessages(passwd_df <-  sheets_read(credentials))
   }
+
   if (!all(names(passwd_df) %in% c("id", "password")))
     stop("password data frame must have columns 'id' and 'password'")
 

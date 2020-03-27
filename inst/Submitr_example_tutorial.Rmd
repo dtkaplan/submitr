@@ -1,0 +1,87 @@
+---
+title: "An example of using `{submitr}` with a tutorial"
+output: learnr::tutorial
+runtime: shiny_prerendered
+tutorial:
+  id: "submitr-demonstration"
+  version: 0.5
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(submitr)
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.storage = "none")
+```
+
+
+## Please login to submission system 
+
+```{r __login__}
+# Local memory
+ credentials <-  tibble::tribble(
+  ~ id,  ~ password,
+  "Anne", "dog",
+  "Betty", "cat"
+)
+storage_actions <- in_local_file("submissions.csv")
+
+# What things look like if using Google Sheets
+# credentials <- 
+#   "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
+# storage_actions <- in_google_sheets(
+#   "1D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI")
+
+
+authorize_submissions(
+  credentials,
+  recorder = storage_actions$write
+  )
+```
+
+If you don't see "ID validated" in a green box, your work is not being recorded.
+
+Get the file with the submissions:
+
+```{r echo=FALSE}
+secret_word <- "hello" # the secret to download the submissions
+```
+
+```{r child = system.file("download_link.Rmd", package = "submitr")}
+```
+
+
+## Topic One
+
+```{r planets}
+question("Which planet do we live on?",
+         answer("Mars", correct=FALSE),
+         answer("Earth", correct = TRUE,  message = "Good job Earthling!"),
+         answer("Saturn",  correct = FALSE),
+         allow_retry = TRUE,
+         random_answer_order = TRUE
+        )
+```
+
+
+
+
+## Topic Two
+
+```{r some_code, exercise=TRUE}
+head(mtcars, 2)
+```
+
+```{r some_code-hint-1}
+"What do you think?"
+```
+
+```{r some_code-hint-2}
+"Go with your gut"
+```
+
+## Video
+
+If I make this into an embedded video (by prepending the link with "bang!") the event recorder doesn't always work.
+
+![Just a link](https://youtu.be/zNzZ1PfUDNk)
