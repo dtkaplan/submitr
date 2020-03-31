@@ -15,6 +15,9 @@
 #' @param shared A logical flag (default TRUE) applicable only when the
 #' credentials file is stored as a universally readable google spreadsheet.
 #'
+#' @param return_df A logical flag (default FALSE) specifying that the password
+#' file should be returned.
+#'
 #' @importFrom googlesheets4 sheets_auth sheets_append sheets_read
 #' @importFrom googledrive drive_auth drive_token
 #' @importFrom shiny textInput
@@ -34,8 +37,9 @@ authorize_submissions <- function(
   credentials,
   recorder = cat_event(),
   placeholder = "Enter ID here in format user_name::password",
-  shared = TRUE
-  ) {
+  shared = TRUE,
+  return_df = FALSE)
+  {
 
   #  set up the event handler
   options(tutorial.event_recorder =
@@ -70,6 +74,9 @@ authorize_submissions <- function(
 
   if (!all(names(passwd_df) %in% c("id", "password")))
     stop("password data frame must have columns 'id' and 'password'")
+
+
+  if (return_df)  return(passwd_df)
 
   # Create  the field for entering User ID and password
   # Trying to turn  off storage of previous answers ...

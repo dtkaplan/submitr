@@ -14,42 +14,34 @@ knitr::opts_chunk$set(echo = FALSE)
 options(tutorial.storage = "none")
 ```
 
+<!-- Start login block -->
+```{r __login__, echo=FALSE}
+instructor_key <- "hello"
 
-## Please login to submission system 
+# What things would look like if using Google Sheets
+#      credentials <- 
+#        "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
+#      storage_actions <- 
+#        in_google_sheets(
+#          "D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI")
 
-```{r __login__}
+# But in this example, we'll replace these to
+# make the password and storage local
+storage_actions <- in_local_file("submissions.csv")
 # Local memory
- credentials <-  tibble::tribble(
+credentials <-  tibble::tribble(
   ~ id,  ~ password,
   "Anne", "dog",
   "Betty", "cat"
 )
-storage_actions <- in_local_file("submissions.csv")
-
-# What things look like if using Google Sheets
-# credentials <- 
-#   "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
-# storage_actions <- in_google_sheets(
-#   "1D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI")
-
-
-authorize_submissions(
-  credentials,
-  recorder = storage_actions$write
-  )
 ```
 
-If you don't see "ID validated" in a green box, your work is not being recorded.
-
-Get the file with the submissions:
-
-```{r echo=FALSE}
-secret_word <- "hello" # the secret to download the submissions
+```{r child=system.file("submitr_login_script.Rmd", package = "submitr")}
+# This must go after the chunk defining credentials, passwords, 
+# and the instructor key
 ```
 
-```{r child = system.file("download_link.Rmd", package = "submitr")}
-```
-
+<!--End login block-->
 
 ## Topic One
 
@@ -82,6 +74,6 @@ head(mtcars, 2)
 
 ## Video
 
-If I make this into an embedded video (by prepending the link with "bang!") the event recorder doesn't always work.
+If I make this into an embedded video (by prepending the link with "bang!"). 
 
 ![Just a link](https://youtu.be/zNzZ1PfUDNk)

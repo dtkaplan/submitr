@@ -26,9 +26,6 @@ make_recorder <- function(store_fun = cat_event()) {
                   tutorial_version,
                   user_id,
                   event, data) {
-    cat("in top-level  recorder\n")
-
-
     # Put the elements of data into a data frame with always
     # the same names
     data$video_time <- data$time # give it a better name
@@ -100,7 +97,6 @@ in_local_file <- function(key) {
       # first time  the created function  is called.
       append_to_file <- FALSE #  this is a temporary copy
     }
-cat("Appending to file:", append_to_file, "\n")
     write.table(this_event, file = key, sep = ",",
                 append = append_to_file, quote = TRUE,
                 qmethod  = "escape",

@@ -1,7 +1,7 @@
 Package: submitr
 Type: Package
 Title: Handles submissions to a database of events in R sessions.
-Version: 0.2.0
+Version: 0.2.1
 Author: Daniel Kaplan
 Maintainer: Daniel Kaplan <kaplan@macalester.edu>
 Description: More about what it does (maybe more than one line)

@@ -8,7 +8,8 @@ authorize_submissions(
   credentials,
   recorder = cat_event(),
   placeholder = "Enter ID here in format user_name::password",
-  shared = TRUE
+  shared = TRUE,
+  return_df = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ See also `in_google_sheets(storage_sheet_key)`.}
 
 \item{shared}{A logical flag (default TRUE) applicable only when the
 credentials file is stored as a universally readable google spreadsheet.}
+
+\item{return_df}{A logical flag (default FALSE) specifying that the password
+file should be returned.}
 }
 \description{
 Creates a text box group tutorial quiz question.

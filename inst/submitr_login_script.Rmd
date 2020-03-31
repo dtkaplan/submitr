@@ -1,0 +1,76 @@
+```{r echo=FALSE}
+
+password_df <- authorize_submissions(
+  credentials,
+  recorder = storage_actions$write,
+  return_df = TRUE
+  )
+```
+
+
+`r textOutput("login_message")`
+`r '<table><tr><td>ID:</td><td><input id="userID" type="text" class="form-control" value=""/></td><td>     Passwd</td><td><input id="password" type="password" class="form-control" value="" /></td><td></td></tr></table>'`
+
+```{r echo=FALSE}
+
+```
+
+```{r echo = FALSE}
+conditionalPanel(
+  condition =
+    paste0("input.userID == 'instructor' && input.password == '", 
+           instructor_key, "'"),
+  downloadLink("get_submissions",  label="Download submissions")
+)
+```
+
+```{r context = "server"}
+valid_id <- reactive({
+  cat("In  login shiny\n")
+  user_row <- which(input$userID == password_df$id)
+
+  return(! length(user_row) == 0)
+})
+valid_password <- reactive({
+  if (is.null(input$password)) return(FALSE)
+  user_row <- which(input$userID == password_df$id)
+
+  if (length(user_row) == 0) FALSE
+  else input$password == password_df$password[user_row]
+})
+
+# observe({
+#   if (valid_password()) {
+#     updateActionButton(session, "do_login", label = "Success!")
+#     
+#   } else {
+#     updateActionButton(session, "do_login", label = "Log in")
+#     submitr:::store_ID(paste("unauthenticated", input$userID))
+#   }
+# })
+output$login_message <-
+  renderText({ 
+      # cat("ID is", input$userID, "with password", input$password, "\n")
+      # cat("Id is", valid_id(), "and password  is", valid_password(), "\n")
+      if (valid_id()  && valid_password()) {
+        submitr:::store_ID(input$userID)
+        "Login SUCCESSFUL."
+      } else if (valid_id()) {
+        submitr:::store_ID(paste("unauthenticated", input$userID))
+        "Incorrect  password"
+      } else if (nchar(input$userID) > 1) {"Invalid user ID"}
+      else {
+        submitr:::store_ID("..anonymous..")
+        "Please log in."
+      }
+    })
+
+# Link to download submissions ...
+output$get_submissions <- downloadHandler(
+  filename = function() {
+    paste0("submissions-", Sys.Date(), ".csv")
+  },
+  content = storage_actions$read_submissions
+)
+```
+
