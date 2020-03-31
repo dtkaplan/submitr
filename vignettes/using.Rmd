@@ -80,24 +80,30 @@ Add three lines identifying the tutorial. This information allows you easily to 
     
 **At the start of the document**
 
-Add a section, presumably at the start of the document, that authorizes the tutorial to access the user-credential information and the log storage. For Google sheets storage, the section will 
+Add a section at the start of the document that authorizes the tutorial to access the user-credential information and the log storage. For Google sheets storage, the section will 
 look like this.
 
 ````
 `` `{r __login__}
+instructor_key <- "something secret"
 credentials <- 
   "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
 storage_actions <- in_google_sheets(
   "1D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI")
-
-authorize_submissions(
-  credentials,
-  recorder = storage_actions$write
-  )
 `` `
 ````
 
 The long character strings are Google Sheets "keys," from which the URL of the credentials file and the submission storage, the means used by the `{googlesheets4}` package to read and write Google sheets.
+
+After the `__login__` chunk, add a new chunk which will always be *exactly* as follows:
+
+````
+`` `{r child=system.file("submitr_login_script.Rmd", package = "submitr")}
+```
+````
+
+To emphasize: The "child=" chunk must go after the chunk defining credentials, passwords, and the instructor key
+
 
 If you are using local file storage, replace the `storage_actions` assignment with something like this:
 
@@ -112,23 +118,17 @@ If you want to use a local file to store the student credentials, do so by repla
 credentials <- "my_students_credentials.csv"
 ```
 
+The CSV credentials file, if one is used, needs to be in the same directory as the tutorial's source Rmd file.
+
 ## Downloading the submissions
 
 As students use the tutorials, their actions will be recorded in the submissions file or Google Sheet. If the tutorials are deployed via server, the instructor can access these directly, either by going to the Google Sheet or logging into the server to harvest the file.
 
-It's easy to provide another way to access the submissions, which might be convenient if there are multiple graders. `{Submitr}` provides a means to add a submissions-download link to the tutorial in a secure way. To do this, add the following two chunks to your tutorial:
+`{Submitr}` provides an additional means to download the submissions directly from the tutorial. This is helpful if there will be multiple graders or, when there are multiple tutorials, simply to help an instructor keep track of which submissions file is which.
 
-    `` `{r echo=FALSE}
-    secret_word <- "something_you_can_remember"
-    `` `
+Downloading is done by a link under the login boxes. By default, the link is not accessible. To access the link, give the user ID "instructor" in the login box and the `instructor_key` (set earlier in the document) as the password. 
 
-    `` `{r child = system.file("download_link.Rmd", package = "submitr")}
-    `` `
-The chunks must be distinct; you can't combine the content into a single chunk.
-
-These two chunks will cause to be displayed an empty text-entry box labeled "For grading only." When the secret word is typed into that box, a link will appear for downloading the submissions file by the browser.
-
-I imagine the main use for this will be for instructors and graders, to give them access to the stored submissions for each tutorial. However, by giving students the secret word (perhaps something obvious like `download`), students can access the submissions as well. Allowing this would make sense if students are running the tutorial on their own computers or using `rstudio.cloud` or a similar server. In this scenario, students would hand in their submissions file by, e.g., uploading it to a course support system such as Blackboard or Moodle. 
+I imagine the main use for this will be for instructors and graders, to give them access to the stored submissions for each tutorial. However, by giving students the instructor key (perhaps something obvious like `download`), students can access the submissions as well. Allowing this would make sense if students are running the tutorial on their own computers or using `rstudio.cloud` or a similar server. In this scenario, students would hand in their submissions file by, e.g., uploading it to a course support system such as Blackboard or Moodle. 
 
 ## Creating and accessing a Google Sheets file
 
