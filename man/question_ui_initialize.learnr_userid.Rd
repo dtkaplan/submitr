@@ -14,6 +14,7 @@
 \item{...}{Additional arguments}
 }
 \description{
+I DON'T NEED ANY OF THIS ANY MORE
 You  don't need to call these yourself, but they
 have to be  exported so that learnr can have access  to them.
 }

@@ -89,7 +89,8 @@ instructor_key <- "something secret"
 credentials <- 
   "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
 storage_actions <- in_google_sheets(
-  "1D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI")
+  "1D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI",
+  email = "statprep.annie@gmail.com")
 `` `
 ````
 
@@ -157,7 +158,8 @@ In response, Google will ask for permissions .... Give them for the Google accou
 
 3. Give the additional R command
 ```r
-googlesheets4::sheets_auth(token = drive_token())
+googlesheets4::sheets_auth(
+  token = googledrive::drive_token())
 ```
 
 This process will create a folder named `.secrets` in the current R working directory (which will be where your tutorial's Rmd lives). That folder will have a file whose name ends in the google email address for the account in which the submissions storage sheet was created. 

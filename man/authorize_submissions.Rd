@@ -4,13 +4,7 @@
 \alias{authorize_submissions}
 \title{Authorize submissions  to the  database}
 \usage{
-authorize_submissions(
-  credentials,
-  recorder = cat_event(),
-  placeholder = "Enter ID here in format user_name::password",
-  email = "",
-  return_df = FALSE
-)
+authorize_submissions(credentials, email = "")
 }
 \arguments{
 \item{credentials}{One of these choices:
@@ -18,19 +12,10 @@ authorize_submissions(
 2. the name of a CSV file containing that information;and
 3. key to google sheet storing user ID/password pairs}
 
-\item{recorder}{The function used to record events. By
-default  this is `cat_event()`, which merely prints the  event to the console.
-See also `in_google_sheets(storage_sheet_key)`.}
-
-\item{placeholder}{Character string giving instructions to user.}
-
 \item{email}{The google account email address corresponding to the credentials.
 This is applicable only when google sheets is being used. Set  `email` to the zero-length string,
 that is `""`, when the
 credentials file is stored as a universally readable google spreadsheet.}
-
-\item{return_df}{A logical flag (default FALSE) specifying that the password
-file should be returned.}
 }
 \description{
 Using an authorization token stored under a `.secrets` directory,
@@ -42,9 +27,7 @@ by the `email` argument.
 authorize_submissions(
    credentials =
         data.frame(id  = c("anne", "betty"), passwords = c("cat", "dog"))
-   recorder = in_google_sheets("234238d8322s2342"),
-   email = 'myaddress@google.com',
-   placeholder = "Type ID and  password here.",
+   email = 'myaddress@google.com'
    )
 }
 }

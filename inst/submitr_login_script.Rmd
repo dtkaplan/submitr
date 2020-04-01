@@ -1,19 +1,18 @@
-```{r echo=FALSE}
-password_df <- authorize_submissions(
-  credentials,
-  recorder = storage_actions$write,
-  return_df = TRUE,
-  email = account_name # should have been set previously
-  )
+```{r echo=FALSE, context = "server"}
+googledrive::drive_deauth()
+password_df <- suppressMessages(googlesheets4::read_sheet(credentials))
+user_id <- "not initialized"
+# password_df <- tibble::tribble(
+#   ~ id, ~ password,
+#   "Danny", "mosaic",
+#   "Mindo", "dog"
+# )
 ```
 
 
 `r textOutput("login_message")`
 `r '<table><tr><td>ID:</td><td><input id="userID" type="text" class="form-control" value=""/></td><td>     Password</td><td><input id="password" type="password" class="form-control" value="" /></td><td></td></tr></table>'`
 
-```{r echo=FALSE}
-
-```
 
 ```{r echo = FALSE}
 conditionalPanel(
@@ -42,28 +41,31 @@ valid_password <- reactive({
   }
 })
 
-# observe({
-#   if (valid_password()) {
-#     updateActionButton(session, "do_login", label = "Success!")
-#     
-#   } else {
-#     updateActionButton(session, "do_login", label = "Log in")
-#     submitr:::store_ID(paste("unauthenticated", input$userID))
-#   }
-# })
+# set the learnr logging function
+observe({
+  if (valid_id()) {
+    
+    if (valid_password())  {
+      user_identification <- isolate(input$userID)
+    } else {
+      user_identification <- paste("Unauthenticated", isolate(input$userID))
+    }
+    options(tutorial.event_recorder =
+              make_recorder(store_fun = storage_actions$write,
+                            markr_id = user_identification))
+            
+  }
+})
+
 output$login_message <-
   renderText({ 
-      # cat("ID is", input$userID, "with password", input$password, "\n")
-      # cat("Id is", valid_id(), "and password  is", valid_password(), "\n")
+  
       if (valid_id()  && valid_password()) {
-        submitr:::store_ID(input$userID)
         "Login SUCCESSFUL."
       } else if (valid_id()) {
-        submitr:::store_ID(paste("unauthenticated", input$userID))
-        "Incorrect  password"
+        "Valid ID but password not yet correct"
       } else if (nchar(input$userID) > 1) {"Invalid user ID"}
       else {
-        submitr:::store_ID("..anonymous..")
         "Please log in."
       }
     })

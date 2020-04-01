@@ -4,7 +4,7 @@
 \alias{make_recorder}
 \title{Create a recorder function for  learnr}
 \usage{
-make_recorder(store_fun = cat_event())
+make_recorder(store_fun = cat_event(), markr_id = "anonymous")
 }
 \arguments{
 \item{store_fun}{A call to one of the constructors for a

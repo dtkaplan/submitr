@@ -16,7 +16,7 @@
 #' @importFrom utils capture.output
 #'
 #' @export
-make_recorder <- function(store_fun = cat_event()) {
+make_recorder <- function(store_fun = cat_event(),  markr_id ="anonymous") {
   # Create a unique ID for the  IDs submitted in this  session.
   session_id <- make_session_id()
 
@@ -37,11 +37,12 @@ make_recorder <- function(store_fun = cat_event()) {
     actual_names <- intersect(data_names, names(data))
     data_in_standard_format[actual_names] <- data[actual_names]
 
+    cat("The ID is ", markr_id, "\n")
 
     this_event <-
       data.frame(time = date(), user_id = user_id,
                  session_id = session_id,
-                 markr_id = get_ID(),
+                 markr_id = markr_id,  #get_ID(),
                  event = event,
                  tutorial_id = tutorial_id,
                  tutorial_version = tutorial_version,
@@ -70,10 +71,17 @@ make_recorder <- function(store_fun = cat_event()) {
 #'
 #' @export
 in_google_sheets  <-  function(key, email) {
-  # Authorize the request
-  googledrive::drive_auth(cache = ".secrets",  email = email)
-  googlesheets4::sheets_auth(token = googledrive::drive_token())
+
+  initiated <- FALSE # shared among all three functions
+
+  do_initialization <- function() {
+    # Authorize the request
+    googledrive::drive_auth(cache = ".secrets",  email = email)
+    googlesheets4::sheets_auth(token = googledrive::drive_token())
+    initiated <<- TRUE
+  }
   write <- function(this_event) {
+    if (!initiated) do_initialization()
     suppressMessages(
       googlesheets4::sheets_append(
         this_event,
@@ -81,6 +89,7 @@ in_google_sheets  <-  function(key, email) {
     )
   }
   read_submissions <- function(fname) {
+    if (!initiated) do_initialization()
     contents <- googlesheets4::sheets_read(key)
     write.csv(contents, file = fname, row.names=FALSE)
   }
@@ -90,7 +99,9 @@ in_google_sheets  <-  function(key, email) {
 
 # Write to a local  file
 #' @export
-in_local_file <- function(key) {
+in_local_file <- function(key, email = "") {
+  # email is a dummy argument so that all  the recorders have the
+  # same calling  interface
   append_to_file <- TRUE # this is the permanent value
 
   write <- function(this_event) {
@@ -114,7 +125,7 @@ in_local_file <- function(key) {
 
 # Display the event in the console
 #' @export
-cat_event <- function(key) {
+cat_event <- function(key, email) {
   write <- function(this_event) {
     cat("Submission event from  user", this_event$markr_id,
         "in session", this_event$session_id ,"\n")
