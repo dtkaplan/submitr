@@ -55,9 +55,6 @@ question("Which planet do we live on?",
         )
 ```
 
-
-
-
 ## Topic Two
 
 ```{r some_code, exercise=TRUE}

@@ -8,7 +8,7 @@ authorize_submissions(
   credentials,
   recorder = cat_event(),
   placeholder = "Enter ID here in format user_name::password",
-  shared = TRUE,
+  email = "",
   return_df = FALSE
 )
 }
@@ -24,14 +24,18 @@ See also `in_google_sheets(storage_sheet_key)`.}
 
 \item{placeholder}{Character string giving instructions to user.}
 
-\item{shared}{A logical flag (default TRUE) applicable only when the
+\item{email}{The google account email address corresponding to the credentials.
+This is applicable only when google sheets is being used. Set  `email` to the zero-length string,
+that is `""`, when the
 credentials file is stored as a universally readable google spreadsheet.}
 
 \item{return_df}{A logical flag (default FALSE) specifying that the password
 file should be returned.}
 }
 \description{
-Creates a text box group tutorial quiz question.
+Using an authorization token stored under a `.secrets` directory,
+authorize access to the account's google sheets. The account is specified
+by the `email` argument.
 }
 \examples{
 \dontrun{
@@ -39,6 +43,7 @@ authorize_submissions(
    credentials =
         data.frame(id  = c("anne", "betty"), passwords = c("cat", "dog"))
    recorder = in_google_sheets("234238d8322s2342"),
+   email = 'myaddress@google.com',
    placeholder = "Type ID and  password here.",
    )
 }

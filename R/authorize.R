@@ -1,6 +1,8 @@
 #' Authorize submissions  to the  database
 #'
-#' Creates a text box group tutorial quiz question.
+#' Using an authorization token stored under a `.secrets` directory,
+#' authorize access to the account's google sheets. The account is specified
+#' by the `email` argument.
 #'
 #' @param credentials One of these choices:
 #' 1. Data frame of user IDs/passwords;
@@ -12,7 +14,9 @@
 #'
 #' @param placeholder Character string giving instructions to user.
 #'
-#' @param shared A logical flag (default TRUE) applicable only when the
+#' @param email The google account email address corresponding to the credentials.
+#' This is applicable only when google sheets is being used. Set  `email` to the zero-length string,
+#' that is `""`, when the
 #' credentials file is stored as a universally readable google spreadsheet.
 #'
 #' @param return_df A logical flag (default FALSE) specifying that the password
@@ -29,6 +33,7 @@
 #'    credentials =
 #'         data.frame(id  = c("anne", "betty"), passwords = c("cat", "dog"))
 #'    recorder = in_google_sheets("234238d8322s2342"),
+#'    email = 'myaddress@google.com',
 #'    placeholder = "Type ID and  password here.",
 #'    )
 #' }
@@ -37,10 +42,9 @@ authorize_submissions <- function(
   credentials,
   recorder = cat_event(),
   placeholder = "Enter ID here in format user_name::password",
-  shared = TRUE,
+  email = '',
   return_df = FALSE)
   {
-
   #  set up the event handler
   options(tutorial.event_recorder =
             make_recorder(recorder))
@@ -52,32 +56,29 @@ authorize_submissions <- function(
     passwd_df = credentials
   } else if (file.exists(credentials)) {
     passwd_df = read.csv(credentials)
-  } else {
-    if (shared) {
-      googledrive::drive_deauth() # use an open credentials sheet
-      passwd_df <- sheets_read(credentials)
-    }
+  } else if (nchar(email) == 0) {
+      # use an open credentials sheet
+      googledrive::drive_deauth()
+      passwd_df <- suppressMessages(sheets_read(credentials))
+  } else if (file.exists(".secrets")) {
     # read the passwords from a Google sheet identified by <credentials>
-    if (file.exists(".secrets")) {
-    googledrive::drive_auth(cache = ".secrets")#,  email = email)
-    googlesheets4::sheets_auth(token = googledrive::drive_token())
-    } else {
-      googledrive::drive_deauth() # use an open credentials file.
+    if (is.null(googledrive::drive_token())) {
+      googledrive::drive_auth(
+        cache = ".secrets", use_oob = TRUE,  email = email)
+      googlesheets4::sheets_auth(token = googledrive::drive_token())
     }
-  }
-
-  # Get the credentials file if it hasn't been gotten already
-  # by some other means.
-  if (is.null(passwd_df)) {
-    suppressMessages(passwd_df <-  sheets_read(credentials))
+    passwd_df <- suppressMessages(sheets_read(credentials))
+  } else {
+    stop("Credentials not found.")
   }
 
   if (!all(names(passwd_df) %in% c("id", "password")))
     stop("password data frame must have columns 'id' and 'password'")
 
-
   if (return_df)  return(passwd_df)
 
+
+  # This is for the original system, now defunct.
   # Create  the field for entering User ID and password
   # Trying to turn  off storage of previous answers ...
   res <- login_learnr(passwd_df = passwd_df,

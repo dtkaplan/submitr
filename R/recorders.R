@@ -65,10 +65,13 @@ make_recorder <- function(store_fun = cat_event()) {
 #' Constructors for modes for storage of submissions
 #'
 #' @param key The google sheet ID
+#' @param email Character string with the google email address
+#' that corresponds to the key.
+#'
 #' @export
-in_google_sheets  <-  function(key) {
+in_google_sheets  <-  function(key, email) {
   # Authorize the request
-  googledrive::drive_auth(cache = ".secrets")#,  email = email)
+  googledrive::drive_auth(cache = ".secrets",  email = email)
   googlesheets4::sheets_auth(token = googledrive::drive_token())
   write <- function(this_event) {
     suppressMessages(

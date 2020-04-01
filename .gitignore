@@ -5,3 +5,4 @@
 Testing
 inst/doc
 .DS_Store
+.secrets

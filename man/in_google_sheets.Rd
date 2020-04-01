@@ -4,10 +4,13 @@
 \alias{in_google_sheets}
 \title{Constructors for modes for storage of submissions}
 \usage{
-in_google_sheets(key)
+in_google_sheets(key, email)
 }
 \arguments{
 \item{key}{The google sheet ID}
+
+\item{email}{Character string with the google email address
+that corresponds to the key.}
 }
 \description{
 Constructors for modes for storage of submissions
