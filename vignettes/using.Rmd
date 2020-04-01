@@ -18,6 +18,13 @@ knitr::opts_chunk$set(
 library(submitr)
 ```
 
+NOTES:
+
+- Needed `context="server"` in the child document. This should be working now.
+- Remember to refresh the caches for knitr and pre-rendered whenever the package changes.
+- Install `googlesheets4` from GitHub, not CRAN
+
+
 The `{learnr}` package provides facilities for writing interactive R tutorials. `{submitr}` extends `{learnr}` so that tutorials can log student interaction. This can be useful for monitoring the use of a tutorial, looking for patterns in student answers, or assigning a grade to students.
 
 This vignette is oriented toward instructors and authors of `{learnr}` tutorials, who I will call collectively "instructors." There is one brief section that describes what students need to know to use tutorial logging successfully.

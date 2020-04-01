@@ -1,12 +1,12 @@
 ```{r echo=FALSE, context = "server"}
-googledrive::drive_deauth()
-password_df <- suppressMessages(googlesheets4::read_sheet(credentials))
-user_id <- "not initialized"
-# password_df <- tibble::tribble(
-#   ~ id, ~ password,
-#   "Danny", "mosaic",
-#   "Mindo", "dog"
-# )
+# googledrive::drive_deauth()
+# password_df <- suppressMessages(googlesheets4::read_sheet(credentials))
+# user_id <- "not initialized"
+password_df <- tibble::tribble(
+  ~ id, ~ password,
+  "Danny", "mosaic",
+  "Mindo", "dog"
+)
 ```
 
 
