@@ -1,4 +1,4 @@
-# `{submitr}` : A package for logging learnr tutorial events
+# `{submitr}` : A package for logging `{learnr}` tutorial events
 
 This is in early development, so regard it mainly as a demo.
 
