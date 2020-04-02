@@ -12,10 +12,11 @@ LazyData: true
 Depends: R (>= 3.5.0)
 Imports: learnr,
          googledrive,
-         googlesheets4,
+         googlesheets4 (>= 0.2.0.9000),
          jsonlite,
          shiny,
          knitr
+Remotes: tidyverse/googlesheets4
 Extends: learnr
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr

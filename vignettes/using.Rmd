@@ -91,7 +91,7 @@ Add a section at the start of the document that authorizes the tutorial to acces
 look like this.
 
 ````
-`` `{r __login__}
+`` `{r __login__, context = "setup"}
 instructor_key <- "something secret"
 credentials <- 
   "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
