@@ -1,0 +1,27 @@
+"time","user_id","session_id","markr_id","event","tutorial_id","tutorial_version","label","question","answer","id","correct","code","index","reset","sectionId","video_url","video_time"
+"Wed Mar 25 16:37:59 2020","kaplan","10493654086","anonymous","session_start","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:38:05 2020","kaplan","10493654086","Betty","question_submission","package:submitr-/Testing","0.2.0","__login__","ID","Betty::cat",NA,TRUE,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:38:08 2020","kaplan","10493654086","Betty","exercise_submission","package:submitr-/Testing","0.2.0","some_code",NA,NA,NA,NA,"head(mtcars, 2)
+
+",NA,NA,NA,NA,NA
+"Wed Mar 25 16:38:11 2020","kaplan","10493654086","Betty","section_skipped","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,"section-topic-two",NA,NA
+"Wed Mar 25 16:38:19 2020","kaplan","10493654086","Betty","session_stop","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:40:00 2020","kaplan","0239421274","anonymous","session_start","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:40:04 2020","kaplan","0239421274","Anne","question_submission","package:submitr-/Testing","0.2.0","__login__","ID","Anne::dog",NA,TRUE,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:40:16 2020","kaplan","0239421274","Anne","question_submission","package:submitr-/Testing","0.2.0","planets","Which planet do we live on?","Saturn",NA,FALSE,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:40:22 2020","kaplan","0239421274","Anne","exercise_submission","package:submitr-/Testing","0.2.0","some_code",NA,NA,NA,NA,"head(mtcars, 0)
+
+",NA,NA,NA,NA,NA
+"Wed Mar 25 16:40:28 2020","kaplan","0239421274","Anne","question_submission","package:submitr-/Testing","0.2.0","planets","Which planet do we live on?",NA,NA,NA,NA,NA,TRUE,NA,NA,NA
+"Wed Mar 25 16:40:30 2020","kaplan","0239421274","Anne","question_submission","package:submitr-/Testing","0.2.0","planets","Which planet do we live on?","Mars",NA,FALSE,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:40:32 2020","kaplan","0239421274","Anne","session_stop","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:42:33 2020","kaplan","26278814810","anonymous","session_start","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:58:07 2020","kaplan","69410673945","anonymous","session_start","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:58:15 2020","kaplan","69410673945","Anne","question_submission","package:submitr-/Testing","0.2.0","__login__","ID","Anne::dog",NA,TRUE,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:58:20 2020","kaplan","69410673945","Anne","question_submission","package:submitr-/Testing","0.2.0","planets","Which planet do we live on?","Earth",NA,TRUE,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:58:25 2020","kaplan","69410673945","Anne","exercise_submission","package:submitr-/Testing","0.2.0","some_code",NA,NA,NA,NA,"head(mtcars, 1)
+
+",NA,NA,NA,NA,NA
+"Wed Mar 25 16:58:31 2020","kaplan","69410673945","Anne","session_stop","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 16:58:58 2020","kaplan","2834688476","anonymous","session_start","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"Wed Mar 25 17:01:00 2020","kaplan","2834688476","anonymous","session_stop","package:submitr-/Testing","0.2.0",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA

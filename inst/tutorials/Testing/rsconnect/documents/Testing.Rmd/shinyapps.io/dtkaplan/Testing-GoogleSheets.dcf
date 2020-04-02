@@ -1,0 +1,12 @@
+name: Testing-GoogleSheets
+title: Testing-GoogleSheets
+username:
+account: dtkaplan
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1996718
+bundleId: 2960509
+url: https://dtkaplan.shinyapps.io/Testing-GoogleSheets/
+when: 1585849890.32428
+asMultiple: FALSE
+asStatic: FALSE

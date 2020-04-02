@@ -1,0 +1,64 @@
+---
+title: "Does login work?"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(submitr)
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.storage = "none")
+```
+
+```{r __login__,  context = "setup"}
+instructor_key <- "isostats"
+account_name <- "statprep.annie@gmail.com"
+credentials <-
+  "1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"
+
+storage_actions <-
+  in_google_sheets(
+    "14z7FM64GUq8nc6Q4zvJKH5ynEY2lBttiIIqAxmEgojA", 
+    email = account_name)
+```
+
+```{r child=system.file("submitr_login_script.Rmd", package = "submitr")}
+```
+
+
+
+## Topic One
+
+```{r planets}
+question("Which planet do we live on?",
+         answer("Mars", correct=FALSE),
+         answer("Earth", correct = TRUE,  message = "Good job Earthling!"),
+         answer("Saturn",  correct = FALSE),
+         allow_retry = TRUE,
+         random_answer_order = TRUE
+        )
+```
+
+
+
+
+## Topic Two
+
+```{r some_code, exercise=TRUE}
+head(mtcars, 2)
+```
+
+```{r some_code-hint-1}
+"What do you think?"
+```
+
+```{r some_code-hint-2}
+"Go with your gut"
+```
+
+## Video
+
+If I make this into an embedded video (by prepending the link with "bang!") the event recorder doesn't always work.
+
+![Just a link](https://youtu.be/zNzZ1PfUDNk)

@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-Testing
 inst/doc
 .DS_Store
 .secrets
