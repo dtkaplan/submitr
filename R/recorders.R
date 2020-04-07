@@ -76,7 +76,7 @@ in_google_sheets  <-  function(key, email) {
 
   do_initialization <- function() {
     # Authorize the request
-    googledrive::drive_auth(cache = ".secrets",  email = email)
+    googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
     googlesheets4::sheets_auth(token = googledrive::drive_token())
     initiated <<- TRUE
   }
