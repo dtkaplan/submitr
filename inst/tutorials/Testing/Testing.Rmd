@@ -23,10 +23,12 @@ storage_actions <-
     email = account_name)
 ```
 
-```{r child=system.file("submitr_login_script.Rmd", package = "submitr")}
+<!--
+child=system.file("submitr_login_script.Rmd", package = "submitr")}
+-->
+
+```{r child="submitr_login_script.Rmd"}
 ```
-
-
 
 ## Topic One
 

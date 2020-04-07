@@ -116,6 +116,9 @@ $(document).ready(function () {
 
 <div class="topics">
 
+<!--
+child=system.file("submitr_login_script.Rmd", package = "submitr")}
+-->
 <div id="login_message" class="shiny-text-output"></div>
 <table>
 <tr>
@@ -196,14 +199,14 @@ storage_actions <-
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
-googledrive::drive_deauth()
-password_df <- suppressMessages(googlesheets4::read_sheet(credentials))
-user_id <- "not initialized"
-# password_df <- tibble::tribble(
-#   ~ id, ~ password,
-#   "Danny", "mosaic",
-#   "Mindo", "dog"
-# )
+# googledrive::drive_deauth()
+# password_df <- suppressMessages(googlesheets4::read_sheet(credentials))
+# user_id <- "not initialized"
+password_df <- tibble::tribble(
+  ~ id, ~ password,
+  "Danny", "mosaic",
+  "Mindo", "dog"
+)
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
@@ -263,7 +266,7 @@ output$get_submissions <- downloadHandler(
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "planets", question = structure("Which planet do we live on?", html = TRUE, class = c("html", "character")), answers = list(structure(list(id = "lnr_ans_177709",     option = "Mars", value = "Mars", label = structure("Mars", html = TRUE, class = c("html",     "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a3a05e7",     option = "Earth", value = "Earth", label = structure("Earth", html = TRUE, class = c("html",     "character")), correct = TRUE, message = structure("Good job Earthling!", html = TRUE, class = c("html",     "character"))), class = c("tutorial_question_answer", "tutorial_quiz_answer")), structure(list(id = "lnr_ans_681b1b6", option = "Saturn",     value = "Saturn", label = structure("Saturn", html = TRUE, class = c("html",     "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", "tutorial_quiz_answer"))), button_labels = list(submit = structure("Submit Answer", html = TRUE, class = c("html", "character")), try_again = structure("Try Again", html = TRUE, class = c("html", "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", "character")), try_again = structure("Incorrect", html = TRUE, class = c("html", "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", "character")), message = NULL, post_message = NULL), ids = list(    answer = "planets-answer", question = "planets"), loading = structure("<strong>Loading:<\u002fstrong> \nWhich planet do we live on?\n<br/><br/><br/>", html = TRUE, class = c("html", "character")), random_answer_order = TRUE, allow_retry = TRUE,     seed = 1686062282.21487, options = list()), class = c("learnr_radio", "tutorial_question")))
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "planets", question = structure("Which planet do we live on?", html = TRUE, class = c("html", "character")), answers = list(structure(list(id = "lnr_ans_4a7edd2",     option = "Mars", value = "Mars", label = structure("Mars", html = TRUE, class = c("html",     "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", "tutorial_quiz_answer")), structure(list(id = "lnr_ans_2dd045",     option = "Earth", value = "Earth", label = structure("Earth", html = TRUE, class = c("html",     "character")), correct = TRUE, message = structure("Good job Earthling!", html = TRUE, class = c("html",     "character"))), class = c("tutorial_question_answer", "tutorial_quiz_answer")), structure(list(id = "lnr_ans_37d479e", option = "Saturn",     value = "Saturn", label = structure("Saturn", html = TRUE, class = c("html",     "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", "tutorial_quiz_answer"))), button_labels = list(submit = structure("Submit Answer", html = TRUE, class = c("html", "character")), try_again = structure("Try Again", html = TRUE, class = c("html", "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", "character")), try_again = structure("Incorrect", html = TRUE, class = c("html", "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", "character")), message = NULL, post_message = NULL), ids = list(    answer = "planets-answer", question = "planets"), loading = structure("<strong>Loading:<\u002fstrong> \nWhich planet do we live on?\n<br/><br/><br/>", html = TRUE, class = c("html", "character")), random_answer_order = TRUE, allow_retry = TRUE,     seed = 1979435673.07825, options = list()), class = c("learnr_radio", "tutorial_question")))
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">

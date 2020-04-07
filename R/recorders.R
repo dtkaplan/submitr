@@ -53,10 +53,11 @@ make_recorder <- function(store_fun = cat_event(),  markr_id ="anonymous") {
 
     # Don't store the output of chunks -- it can be arbitrarily long.
     if  ( ! event %in% c("exercise_result")) {
-      store_fun(cbind(this_event, data_in_standard_format))
+      ss <- store_fun(cbind(this_event, data_in_standard_format))
     }
 
     #  Return something to indicate success?
+    ss
   }
 
   res # return the function just created
@@ -76,20 +77,25 @@ in_google_sheets  <-  function(key, email) {
 
   do_initialization <- function() {
     # Authorize the request
-    googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
-    googlesheets4::sheets_auth(token = googledrive::drive_token())
+    cat("Initializing Google Drive for writing\n")
     initiated <<- TRUE
+    googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
+    res <- googlesheets4::sheets_auth(token = googledrive::drive_token())
+
+    res
   }
   write <- function(this_event) {
     cat("Writing an event!\n")
-    return()
 
-    if (!initiated) do_initialization()
-    suppressMessages(
+    if (!initiated) tmp <- do_initialization()
+
+    res <- suppressMessages(
       googlesheets4::sheets_append(
         this_event,
         key)
     )
+    cat("Finished writing\n")
+    return(res)
   }
   read_submissions <- function(fname) {
     if (!initiated) do_initialization()
