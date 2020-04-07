@@ -81,7 +81,7 @@ in_google_sheets  <-  function(key, email) {
     initiated <<- TRUE
     googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
     res <- googlesheets4::sheets_auth(token = googledrive::drive_token())
-
+    cat("Finished initialization\n")
     res
   }
   write <- function(this_event) {
