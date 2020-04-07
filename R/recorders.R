@@ -35,9 +35,7 @@ make_recorder <- function(store_fun = cat_event(),  markr_id ="anonymous") {
     data_in_standard_format <- list()
     data_in_standard_format[data_names] <- NA
     actual_names <- intersect(data_names, names(data))
-    data_in_standard_format[actual_names] <- data[actual_names]
-
-    cat("The ID is ", markr_id, "\n")
+    # data_in_standard_format[actual_names] <- data[actual_names]
 
     this_event <-
       data.frame(time = date(), user_id = user_id,
@@ -77,15 +75,12 @@ in_google_sheets  <-  function(key, email) {
 
   do_initialization <- function() {
     # Authorize the request
-    cat("Initializing Google Drive for writing\n")
     initiated <<- TRUE
     googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
     res <- googlesheets4::sheets_auth(token = googledrive::drive_token())
-    cat("Finished initialization\n")
     res
   }
   write <- function(this_event) {
-    cat("Writing an event!\n")
 
     if (!initiated) tmp <- do_initialization()
 
@@ -94,7 +89,6 @@ in_google_sheets  <-  function(key, email) {
         this_event,
         key)
     )
-    cat("Finished writing\n")
     return(res)
   }
   read_submissions <- function(fname) {
