@@ -81,6 +81,9 @@ in_google_sheets  <-  function(key, email) {
     initiated <<- TRUE
   }
   write <- function(this_event) {
+    cat("Writing an event!\n")
+    return()
+
     if (!initiated) do_initialization()
     suppressMessages(
       googlesheets4::sheets_append(
