@@ -5,9 +5,9 @@ account: dtkaplan
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1996718
-bundleId: 2982977
+bundleId: 2983405
 url: https://dtkaplan.shinyapps.io/Testing-GoogleSheets/
-when: 1586290983.96971
+when: 1586295593.58082
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: submissions.csv

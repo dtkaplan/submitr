@@ -14,8 +14,9 @@ options(tutorial.storage = "none")
 ```{r __login__,  context = "setup"}
 instructor_key <- "isostats"
 account_name <- "statprep.annie@gmail.com"
-credentials <-
-  "1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"
+credentials <- 
+  "https://dtkaplan.github.io/submitr/password.csv"
+ # "1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"
 
 storage_actions <-
   in_google_sheets(

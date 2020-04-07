@@ -1,12 +1,19 @@
+---
+title: "Standard login script"
+---
+
 ```{r echo=FALSE, context = "server"}
-# googledrive::drive_deauth()
+# googledrive::drive_auth(cache=".secrets", use_oob = TRUE,
+#                         email = account_name)
 # password_df <- suppressMessages(googlesheets4::read_sheet(credentials))
-# user_id <- "not initialized"
+
+user_id <- "not initialized"
 password_df <- tibble::tribble(
   ~ id, ~ password,
   "Danny", "mosaic",
   "Mindo", "dog"
 )
+password_df <- readr::read_csv(credentials)
 ```
 
 
