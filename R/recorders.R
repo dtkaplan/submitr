@@ -35,7 +35,7 @@ make_recorder <- function(store_fun = cat_event(),  markr_id ="anonymous") {
     data_in_standard_format <- list()
     data_in_standard_format[data_names] <- NA
     actual_names <- intersect(data_names, names(data))
-    # data_in_standard_format[actual_names] <- data[actual_names]
+    data_in_standard_format[actual_names] <- data[actual_names]
 
     this_event <-
       data.frame(time = date(), user_id = user_id,
