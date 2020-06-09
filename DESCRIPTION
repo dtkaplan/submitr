@@ -12,7 +12,7 @@ LazyData: true
 Depends: R (>= 3.5.0)
 Imports: learnr,
          googledrive,
-         googlesheets4 (>= 0.2.0.9000),
+         googlesheets4 (>= 0.2.0),
          jsonlite,
          shiny,
          knitr

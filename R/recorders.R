@@ -105,7 +105,7 @@ in_google_sheets  <-  function(key, email, vfun = submitr:::auth_sheets) {
   write <- function(this_event) {
     if (!initiated) do_initialization()
     res <- suppressMessages(
-      googlesheets4::sheets_append(
+      googlesheets4::sheet_append(
         this_event,
         key)
     )

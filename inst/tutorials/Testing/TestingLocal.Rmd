@@ -1,0 +1,174 @@
+---
+title: "Exercise"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(submitr)
+library(gradethis)
+library(tidyverse)
+
+knitr::opts_chunk$set(echo = FALSE)
+options(tutorial.storage = "none")
+knitr::opts_chunk$set(exercise.checker = gradethis::grade_learnr)
+```
+
+## Intro 
+
+The first thing you have to do is to log in.
+
+```{r __login__,  context = "setup"}
+instructor_key <- "isostats"
+account_name <- "statprep.annie@gmail.com"
+credentials <- 
+  "password.csv"
+ # "1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM"
+
+storage_actions <- in_local_file("submissions.csv")
+```
+
+<!--
+child=system.file("submitr_login_script.Rmd", package = "submitr")}
+-->
+
+```{r child="submitr_login_script.Rmd"}
+```
+
+### Continue
+
+Click on Next topic to start.
+
+## Short text answers
+
+## Overview
+
+If you'd like users to submit open-ended answers, use a text box question.  Correct and incorrect answers will be matched exactly (including white space). A minimum of one correct answer is required.
+
+Text value inputs are trimmed before they are compared to answers provided.
+
+Here a `custum question_is_correct` function is used
+
+```{r custom_class, echo = FALSE}
+question_is_correct.always_correct <- function(question, value, ...) {
+    return(learnr::mark_as(TRUE, NULL))
+}
+
+question(
+  "Provide your answer",
+  answer("answer", correct = TRUE),
+  correct = "Answer Provided",
+  allow_retry = TRUE,
+  type = c("always_correct", "learnr_text")
+)
+
+```
+
+If the user has to be able to modify answer, we have to trick learnr, by recording "incorrect" answers. Here is another version allowing this, unfortunately with bright red buttons.
+
+```{r text_box, echo = FALSE}
+question_text(
+  "Provide your answer",
+  answer("C0rrect", correct = TRUE),
+  incorrect = "Ok",
+  try_again_button = "Modify your answer",
+  allow_retry = TRUE
+)
+```
+
+
+## Topic One
+
+```{r planets}
+question("Which planet do we live on?",
+         answer("Mars", correct=FALSE),
+         answer("Earth", correct = TRUE,  message = "Good job Earthling!"),
+         answer("Saturn",  correct = FALSE),
+         allow_retry = TRUE,
+         random_answer_order = TRUE
+        )
+```
+
+
+## text
+
+```{r textquestion}
+question_text(
+  "Please enter the word 'C0rrect' below:",
+  answer("correct", message = "Don't forget to capitalize"),
+  answer("c0rrect", message = "Don't forget to capitalize"),
+  answer("Crorrect", message = "Is it really an 'o'?"),
+  answer("C0rrect ", message = "Make sure you do not have a trailing space"),
+  answer("Correct", correct = TRUE),
+  allow_retry = TRUE,
+  trim = FALSE
+)
+```
+
+## `grade_result()`
+
+###
+
+`grade_result()` checks whether or not the student's code returns the correct result. It matches the result against one or more conditions and returns the message (and correct/incorrect status) associated with the first matched condition.
+
+Here is an example of `grade_result()` in use.
+
+* Calculate the average number of weeks in a month.
+
+```{r grade_res, exercise = TRUE}
+
+```
+
+```{r grade_res-check}
+grade_result(
+  pass_if(str_length(.result) > 4, "Write some more")
+)
+```
+
+
+
+
+
+## Topic Two
+```{r}
+text_check <- function(
+  label,
+  user_code,
+  solution_code,
+  check_code,
+  envir_result,
+  evaluate_result,
+  envir_prep,
+  ...
+) {
+  list(message = "Great job!", correct = TRUE, location = "append")
+}
+
+```
+
+```{r enter-text, exercise=TRUE, exercise.cap = "Answer", exercise.lines = 10, exercise.diagnostics = FALSE, exercise.completion = FALSE}
+
+```
+
+```{r enter-text-check }
+
+```
+
+
+## Video
+
+If I make this into an embedded video (by prepending the link with "bang!") the event recorder doesn't always work.
+
+![Just a link](https://youtu.be/zNzZ1PfUDNk)
+
+## Finishing
+
+```{r finish}
+question("Are you finished with the exercise?",
+         answer("Yes", correct=TRUE),
+         answer("No", correct=TRUE)
+        )
+```
+
+
