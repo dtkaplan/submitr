@@ -85,7 +85,7 @@ in_google_sheets  <-  function(key, email) {
     if (!initiated) tmp <- do_initialization()
 
     res <- suppressMessages(
-      googlesheets4::sheets_append(
+      googlesheets4::sheet_append(
         this_event,
         key)
     )

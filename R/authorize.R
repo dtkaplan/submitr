@@ -15,7 +15,7 @@
 #' credentials file is stored as a universally readable google spreadsheet.
 #'
 
-#' @importFrom googlesheets4 sheets_auth sheets_append sheets_read
+#' @importFrom googlesheets4 sheets_auth sheet_append sheet_read
 #' @importFrom googledrive drive_auth drive_token
 #' @importFrom shiny textInput
 #'
