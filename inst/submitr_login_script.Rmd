@@ -32,7 +32,6 @@ conditionalPanel(
 
 ```{r context = "server"}
 valid_id <- reactive({
-  cat("In  login shiny\n")
   user_row <- which(input$userID == password_df$id)
 
   return(! length(user_row) == 0)

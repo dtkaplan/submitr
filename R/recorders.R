@@ -11,12 +11,15 @@
 #' - `in_google_sheets(key)` where `key` is the identifier
 #' for the particular Google Sheet used for
 #' storage of submissions.
+#' @param submitr_id Character string default value for user id before loging
+#' boxes have been filled in.
 #'
 #'
 #' @importFrom utils capture.output
 #'
 #' @export
-make_recorder <- function(store_fun = cat_event(),  markr_id ="anonymous") {
+make_recorder <- function(store_fun = cat_event(),
+                          submitr_id ="anonymous") {
   # Create a unique ID for the  IDs submitted in this  session.
   session_id <- make_session_id()
 
@@ -29,31 +32,50 @@ make_recorder <- function(store_fun = cat_event(),  markr_id ="anonymous") {
     # Put the elements of data into a data frame with always
     # the same names
     data$video_time <- data$time # give it a better name
-    data_names <- c("label", "question", "answer", "id",
-                    "correct", "code", "index", "reset",
-                    "sectionId", "video_url", "video_time")
-    data_in_standard_format <- list()
-    data_in_standard_format[data_names] <- NA
-    actual_names <- intersect(data_names, names(data))
-    data_in_standard_format[actual_names] <- data[actual_names]
-
-    this_event <-
-      data.frame(time = date(), user_id = user_id,
-                 session_id = session_id,
-                 markr_id = markr_id,  #get_ID(),
-                 event = event,
-                 tutorial_id = tutorial_id,
-                 tutorial_version = tutorial_version,
-                 # chunk_label = ifelse(is.null(data$label), "", data$label),
-                 # submission = capture.output(data$answer),
-                 # correct = ifelse(is.null(data$correct), "", data$correct),
-                 stringsAsFactors = FALSE)
-
-    # Don't store the output of chunks -- it can be arbitrarily long.
-    if  ( ! event %in% c("exercise_result")) {
-      ss <- store_fun(cbind(this_event, data_in_standard_format))
+    label <- ifelse("label" %in% names(data), data$label, "NA")
+    comment <- val1 <- val2 <- "NA"
+    val3 <- paste(names(data), collapse = "::") # for development purposes
+    comment <- ifelse("reset" %in% names(data), "reset", comment)
+    if ("video_url" %in% names(data) ) {
+      comment <- "video"
+      val1 <- data$video_url
+      val2 <- data$video_time
+    } else if ("code" %in% names(data)) {
+      comment <- "code"
+      val1 <- data$code
+    } else if ("submission" %in% names(data)){
+      comment = "code submission"
+    } else if ("sectionId" %in% names(data)) {
+      comment <- "section"
+      val1 <- data$sectionId
+    } else if ("question" %in% names(data)) {
+      comment <- "question"
+      if ("answer" %in% names(data) && "correct" %in% names(data))
+        val1 <- paste(data$answer, ":::", data$correct)
+      else val1 <- "reset"
+      val2 <- data$question
+    } else {
+      comment = "handled field"
+      val1 <- paste(names(data), collapse = "::")
     }
 
+    if (event == "exercise_result") {
+      val2 <- paste(data$checked, ":::", data$feedback)
+    }
+
+    this_event <-
+      data.frame(time = date(),
+                 id = paste(submitr_id, user_id),
+                 session_id = session_id,
+                 event = event,
+                 tutorial = paste(label, tutorial_id, tutorial_version),
+                 comment = comment,
+                 val1 = val1,
+                 val2 = val2,
+                 val3 = val3,
+                 stringsAsFactors = FALSE)
+
+    ss <- store_fun(this_event)
     #  Return something to indicate success?
     ss
   }
@@ -67,23 +89,21 @@ make_recorder <- function(store_fun = cat_event(),  markr_id ="anonymous") {
 #' @param key The google sheet ID
 #' @param email Character string with the google email address
 #' that corresponds to the key.
+#' @param vfun function to perform validation
 #'
 #' @export
-in_google_sheets  <-  function(key, email) {
+in_google_sheets  <-  function(key, email, vfun = submitr:::auth_sheets) {
 
   initiated <- FALSE # shared among all three functions
 
   do_initialization <- function() {
     # Authorize the request
     initiated <<- TRUE
-    googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
-    res <- googlesheets4::sheets_auth(token = googledrive::drive_token())
-    res
+    vfun(email, "q", key)
+
   }
   write <- function(this_event) {
-
-    if (!initiated) tmp <- do_initialization()
-
+    if (!initiated) do_initialization()
     res <- suppressMessages(
       googlesheets4::sheets_append(
         this_event,
@@ -96,7 +116,6 @@ in_google_sheets  <-  function(key, email) {
     contents <- googlesheets4::sheets_read(key)
     write.csv(contents, file = fname, row.names=FALSE)
   }
-
   list(write = write, read_submissions = read_submissions)
 }
 
@@ -130,7 +149,7 @@ in_local_file <- function(key, email = "") {
 #' @export
 cat_event <- function(key, email) {
   write <- function(this_event) {
-    cat("Submission event from  user", this_event$markr_id,
+    cat("Submission event from  user", this_event$submitr_id,
         "in session", this_event$session_id ,"\n")
     cat("\tchunk label:", this_event$chunk_label,
         ":: correct:", this_event$correct, "\n")
@@ -142,4 +161,9 @@ cat_event <- function(key, email) {
   }
 
   list(write = write, read_submissions = read_submissions)
+}
+
+auth_sheets <- function(email, letter, key) {
+  googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
+  googlesheets4::sheets_auth(token = googledrive::drive_token())
 }

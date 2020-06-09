@@ -4,7 +4,7 @@
 \alias{make_recorder}
 \title{Create a recorder function for  learnr}
 \usage{
-make_recorder(store_fun = cat_event(), markr_id = "anonymous")
+make_recorder(store_fun = cat_event(), submitr_id = "anonymous")
 }
 \arguments{
 \item{store_fun}{A call to one of the constructors for a
@@ -13,6 +13,9 @@ storage mode. Possibilities:
 - `in_google_sheets(key)` where `key` is the identifier
 for the particular Google Sheet used for
 storage of submissions.}
+
+\item{submitr_id}{Character string default value for user id before loging
+boxes have been filled in.}
 }
 \description{
 Recorder functions are  called automatically by `{learnr}` in
