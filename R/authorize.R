@@ -15,7 +15,7 @@
 #' credentials file is stored as a universally readable google spreadsheet.
 #'
 
-#' @importFrom googlesheets4 sheets_auth sheet_append sheet_read
+#' @importFrom googlesheets4 gs4_auth sheet_append range_read
 #' @importFrom googledrive drive_auth drive_token
 #' @importFrom shiny textInput
 #'
@@ -44,13 +44,13 @@ authorize_submissions <- function(credentials, email = '')
   } else if (nchar(email) == 0) {
       # use an open credentials sheet
       googledrive::drive_deauth()
-      passwd_df <- suppressMessages(sheets_read(credentials))
+      passwd_df <- suppressMessages(range_read(credentials))
   } else if (file.exists(".secrets")) {
     # read the passwords from a Google sheet identified by <credentials>
     if (is.null(googledrive::drive_token())) {
       googledrive::drive_auth(
         cache = ".secrets", use_oob = TRUE,  email = email)
-      googlesheets4::sheets_auth(token = googledrive::drive_token())
+      googlesheets4::gs4_auth(token = googledrive::drive_token())
     }
     passwd_df <- suppressMessages(sheets_read(credentials))
   } else {

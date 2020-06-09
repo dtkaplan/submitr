@@ -105,15 +105,13 @@ in_google_sheets  <-  function(key, email, vfun = submitr:::auth_sheets) {
   write <- function(this_event) {
     if (!initiated) do_initialization()
     res <- suppressMessages(
-      googlesheets4::sheet_append(
-        this_event,
-        key)
+      googlesheets4::sheet_append(key, this_event)
     )
     return(res)
   }
   read_submissions <- function(fname) {
     if (!initiated) do_initialization()
-    contents <- googlesheets4::sheets_read(key)
+    contents <- googlesheets4::range_read(key)
     write.csv(contents, file = fname, row.names=FALSE)
   }
   list(write = write, read_submissions = read_submissions)
@@ -165,5 +163,5 @@ cat_event <- function(key, email) {
 
 auth_sheets <- function(email, letter, key) {
   googledrive::drive_auth(cache = ".secrets", use_oob = TRUE, email = email)
-  googlesheets4::sheets_auth(token = googledrive::drive_token())
+  googlesheets4::gs4_auth(token = googledrive::drive_token())
 }
