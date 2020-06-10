@@ -1,0 +1,62 @@
+---
+title: "A Minimal `{submitr}` Example"
+output: learnr::tutorial
+runtime: shiny_prerendered
+tutorial:
+  id: "minimal-example"
+  version: 0.5
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(submitr)
+library(basket)
+knitr::opts_chunk$set(echo = FALSE)
+learnr::tutorial_options(
+  exercise.timelimit = 60, 
+  exercise.checker = submitr::null_code_checker)
+```
+
+```{r}
+submitr::login_controls()
+```
+
+```{r context = "server", echo = FALSE}
+options(tutorial.storage = "none")
+vfun <- make_basic_validator(NULL, "hello") #basket::check_valid
+storage_actions <- record_local("./minimal_submissions.csv")
+submitr::shiny_logic(input, output, session, vfun,
+                     storage_actions)
+```
+
+<!--End of submitr setup-->
+
+
+
+## Fixed-response questions
+
+```{r planets}
+learnr::question("Which planet do we live on?",
+         answer("Mars", correct=FALSE),
+         answer("Earth", correct = TRUE,  message = "Good job Earthling!"),
+         answer("Saturn",  correct = FALSE),
+         allow_retry = TRUE,
+         random_answer_order = TRUE
+)
+```
+
+
+## Video
+
+![Just a link](https://youtu.be/zNzZ1PfUDNk)
+
+
+## Code
+
+```{r code_sandbox, exercise=TRUE, exercise.cap="Sandbox"}
+
+```
+
+```{r code_sandbox-checker}
+
+```

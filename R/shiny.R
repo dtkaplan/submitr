@@ -37,10 +37,10 @@ shiny_logic <- function(input, output, session,
       } else {
         user_identification <- paste("Unauthenticated", isolate(input$userID))
       }
+      #  create the event recorder once the user has logged in
       options(tutorial.event_recorder =
-                make_recorder(storage_actions$write,
+                make_a_recorder(storage_actions$write,
                               user_identification))
-
     }
   })
 

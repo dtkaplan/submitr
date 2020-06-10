@@ -1,5 +1,5 @@
 ---
-title: "Using `{submitr}` with `{learnr}` tutorials"
+title: "Creating a `{learnr}` tutorial with event logging via `{submitr}`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using submitr}
@@ -20,15 +20,122 @@ library(submitr)
 
 NOTES:
 
-- Needed `context="server"` in the child document. This should be working now.
-- Remember to refresh the caches for knitr and pre-rendered whenever the package changes.
 - Install `googlesheets4` from GitHub, not CRAN
 
 
 The `{learnr}` package provides facilities for writing interactive R tutorials. `{submitr}` extends `{learnr}` so that tutorials can log student interaction. This can be useful for monitoring the use of a tutorial, looking for patterns in student answers, or assigning a grade to students.
 
-This vignette is oriented toward instructors and authors of `{learnr}` tutorials, who I will call collectively "instructors." There is one brief section that describes what students need to know to use tutorial logging successfully.
+This vignette is oriented toward authors of `{learnr}` tutorials.
 
+## A minimal example
+
+The file `"minimal-example.Rmd"` is a short example of a `{learnr}` tutorial that illustrates the essentials of writing a tutorial using `{submitr}`. 
+
+You may want to start by running the tutorial from the command line:
+
+```{r eval=FALSE}
+learnr::run_tutorial("minimal", package = "submitr")
+```
+
+Each page of the tutorial is laid out in the usual manner. By default, `{learnr}` puts a table of contents in a left column. `{submitr}` adds login ID and Password fields at the top of the page. For the minimal example the ID/Password pair "Anne/demo" can be used. An event will be logged whenever you perform a "submit" or "run" action or watch the video.
+
+```{r echo=FALSE, fig.cap="Snapshot of the minimal tutorial at start-up"}
+knitr::include_graphics("images/minimal-first-page.png")
+```
+
+You can explore the document and its action better if you create your own copy to run directly. To do this, copy the `.Rmd` source file to a new file that you can edit. To illustrate, we'll call the new file `minimal.Rmd`. Make the copy with this command:
+
+```{r eval=FALSE}
+file.copy(
+  system.file("tutorials/Minimal/minimal.Rmd", package = "submitr"),
+  "./minimal.Rmd")
+```
+
+Let's consider the various components of `minimal.Rmd`.
+
+### The YAML header
+
+As with all `{learnr}` tutorials, the source document starts with a YAML header.
+
+```{yaml}
+---
+title: "A Minimal `{submitr}` Example"
+output: learnr::tutorial
+runtime: shiny_prerendered
+tutorial:
+  id: "minimal-example"
+  version: 0.5
+---
+```
+
+Note the `tutorial:` section and its fields `id:` and `version:`. You will want to set the `id:` to something unique for each document so that the event logging system can report which document a submission comes from. 
+
+### The `setup` chunk
+
+````
+`r ""````{r setup, include=FALSE}
+library(learnr)
+library(submitr)
+knitr::opts_chunk$set(echo = FALSE)
+learnr::tutorial_options(
+  exercise.timelimit = 60, 
+  exercise.checker = submitr::null_code_checker)
+`r ""````
+````
+
+You can put any additional content you need in the `setup` chunk, but make sure to load both the `{learnr}` and `{submitr}` packages.
+
+The `learnr::tutorial_options()` function is being used to set the exercise checker to be used when processing user code submissions. It's not mandatory to do this. The `{gradethis}` package provides facilities for such code checking. The `submitr::null_code_checker` is just a placeholder that displays a reminder that no genuine checking is being done.
+
+### Login controls
+
+Each document must contain the login controls. These are `{shiny}` components predefined by the `submitr::login_controls()` function.
+
+````
+`r ""````{r}
+submitr::login_controls()
+`r ""````
+````
+
+By putting the login controls before the first section heading, you ensure that they will be visible on *each* page of the tutorial. This can be helpful to the user, giving a constant reminder of whether she is logged in.
+
+### Setting logging parameters
+
+The final `{submitr}`-specific chunk sets the location of the event log,
+passwords for user authentication, and so on. 
+
+````
+`r ""````{r context="server", echo = FALSE}
+options(tutorial.storage = "none")
+vfun <- basket::check_valid
+storage_actions <-
+  in_google_sheets(
+    "1w3fEld2rZlR_6FuzvkA-viOLBA5JdqD3xHl-LuLX3-Y",
+    "statprep.annie@gmail.com",
+    vfun)
+submitr::shiny_logic(input, output, session, vfun,
+                     storage_actions)
+`r ""````
+````
+
+Let's go through it line by line. First, note the chunk parameter `context="server"`.  *This is essential for the login controls to be effective.* 
+
+1. `options(tutorial.storage = "none")`. By default, `{learnr}` bookmarks previous user entries so that they appear in the document on startup. This line turns off that feature so that the previous user ID and password are not filled in at startup. [At some point in the future it would be helpful to modify `{learnr}` to disable the bookmarking automatically for login controls and allow the document author to set the bookmarking policy as desired for the other components of the document.]
+
+2. `vfun <- basket::check_valid`. All of the handling of credentials and authorization (if needed) to write to the logging database is handled by a single, user-provided function accessed *via* the name `vfun`. This will be described in detail in another section. Note that the right-hand side of the assignment here does not include function-evaluation parentheses; we're giving an alias (`vfun`) to the function itself rather than evaluating the function. 
+
+3. `storage_actions` is the name holding information about the place where logged events will be stored. We'll defer details to a later section. In this example, the events are stored locally in a file named `"submissions.csv"`.
+
+4. `submitr::shiny_logic()` implements the logic needed to connect the login controls to the rest of the logging system.
+
+
+## Writing to Google Sheets
+```
+  # gs4_recorder(
+  #   "1w3fEld2rZlR_6FuzvkA-viOLBA5JdqD3xHl-LuLX3-Y",
+  #   "statprep.annie@gmail.com",
+  #   vfun)
+```
 
 ## Setting up a class
 
@@ -165,7 +272,7 @@ In response, Google will ask for permissions .... Give them for the Google accou
 
 3. Give the additional R command
 ```r
-googlesheets4::sheets_auth(
+googlesheets4::gs4_auth(
   token = googledrive::drive_token())
 ```
 
