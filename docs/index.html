@@ -86,18 +86,7 @@
 <div id="submitr--a-package-for-logging-learnr-tutorial-events" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#submitr--a-package-for-logging-learnr-tutorial-events" class="anchor"></a><code>{submitr}</code> : A package for logging <code>{learnr}</code> tutorial events</h1></div>
-<p>This is in early development, so regard it mainly as a demo.</p>
-<p>See <code>inst/tutorials/Testing/Testing.Rmd</code> for a working example. You can get this most easily from the GitHub repo. (Otherwise, you’ll have to use <code><a href="https://rdrr.io/r/base/system.file.html">system.file("tutorials/Testing/Testing.Rmd")</a></code>.)</p>
-<p>You can login with any of the passwords contained in the <a href="https://docs.google.com/spreadsheets/d/1WvQDD1sQHcc_aZ1eisWkZvhU4a3jEAR2HXt_1REojpM/edit?usp=sharing">password Google Sheet</a>.</p>
-<p>From within the tutorial, you can download the submissions by setting the user ID to “instructor” with the password “isostats”. If you want to monitor the updating of the submissions, look at the <a href="https://docs.google.com/spreadsheets/d/14z7FM64GUq8nc6Q4zvJKH5ynEY2lBttiIIqAxmEgojA/edit?usp=sharing">submission storage Google Sheet</a></p>
-<p><strong>Notices</strong>:</p>
-<ul>
-<li><p>If you write your own tutorial, keep in mind that access to Google Sheets requires a login token. There is such a token in the <code>inst/tutorials/Testing/Testing.Rmd</code> directory. You can write your own <code>{submitr}</code> tutorials to access the same Google Sheet storage by putting them in the same <code>inst/tutorials/Testing/</code> directory. Alternatively, follow the instructions in the vignette and set up your own Google Sheets for storage, creating a new token for them.</p></li>
-<li><p>Installing <code>submitr</code> should install the current GitHub version of <code>googlesheets4</code>. If not, <code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github("tidyverse/googlesheets4")</a></code></p></li>
-<li><p>When you “Run document” with <code>Testing.Rmd</code>, it’s best to clear the pre-rendered output cache (which you can do from the dropdown menu beside “Run document” or simply by removing the <code>Testing.html</code> file that sits alongside <code>Testing.Rmd</code>). I do not understand why this is necessarily. When I fail to do this, updates to the <code>submitr</code> package – especially the <code>submitr_login_script.Rmd</code> – aren’t reflected in the running app.</p></li>
-<li><p>Much of the action behind <code>{submitr}</code> is triggered by the <code>submitr_login_script.Rmd</code> which is included in a tutorial document using a <code>{knitr}</code> “child” chunk. In particular, <code>submitr_login_script.Rmd</code> is where the Shiny login widgets are created and where the Shiny reactives live that make the widgets operational.</p></li>
-</ul>
-<p>Status Apr 2, 2020: <code>Testing.Rmd</code> runs well from within an RStudio session. It is not yet working when deployed to ShinyApps.io. An earlier version (&lt;dtkaplan.shinyapps.io/markr-demo&gt;) does work. I am not sure what is going wrong now.</p>
+<p>See the vignette for the package, available <a href="dtkaplan.github.io/submitr">here</a></p>
 </div>
   </div>
 
