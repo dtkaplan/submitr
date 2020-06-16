@@ -56,7 +56,3 @@ learnr::question("Which planet do we live on?",
 ```{r code_sandbox, exercise=TRUE, exercise.cap="Sandbox"}
 
 ```
-
-```{r code_sandbox-checker}
-
-```

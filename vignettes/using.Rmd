@@ -85,11 +85,11 @@ learnr::tutorial_options(
 
 You can put any additional content you need in the `setup` chunk, but make sure to load both the `{learnr}` and `{submitr}` packages.
 
-The `learnr::tutorial_options()` function is being used to set the exercise checker to be used when processing user code submissions. It's not mandatory to do this. The `{gradethis}` package provides facilities for such code checking. The `submitr::null_code_checker` is just a placeholder that displays a reminder that no genuine checking is being done.
+The `learnr::tutorial_options()` function is being used to set the exercise checker to be used when processing user code submissions. It's not mandatory to do this. The `{gradethis}` package provides facilities for such code checking. The `submitr::null_code_checker` is just a placeholder that displays a reminder that no genuine checking is being done. To use the `{gradethis}` checker, replace `submitr::null_code_checker` with `gradethis::grade_learnr`.  
 
 ### Login controls
 
-Each document must contain the login controls. These are `{shiny}` components predefined by the `submitr::login_controls()` function.
+Each `{submitr}` document contains login authentication controls. These are `{shiny}` components predefined by the `submitr::login_controls()` function.
 
 ````
 `r ""````{r}
@@ -107,157 +107,93 @@ passwords for user authentication, and so on.
 ````
 `r ""````{r context="server", echo = FALSE}
 options(tutorial.storage = "none")
-vfun <- basket::check_valid
-storage_actions <-
-  in_google_sheets(
-    "1w3fEld2rZlR_6FuzvkA-viOLBA5JdqD3xHl-LuLX3-Y",
-    "statprep.annie@gmail.com",
-    vfun)
+vfun <- submitr::make_basic_validator(NULL, "hello")
+storage_actions <- submitr::record_local("./minimal_submissions.csv")
 submitr::shiny_logic(input, output, session, vfun,
                      storage_actions)
 `r ""````
 ````
 
-Let's go through it line by line. First, note the chunk parameter `context="server"`.  *This is essential for the login controls to be effective.* 
+Let's go through it line by line. First, note the chunk parameter `context="server"`.  *This is essential for the login controls to be effective.* Chunks with `context="server"` are the means by which additional `{shiny}` server components, such as those for the login-controls, will be active while the tutorial is being run.
 
 1. `options(tutorial.storage = "none")`. By default, `{learnr}` bookmarks previous user entries so that they appear in the document on startup. This line turns off that feature so that the previous user ID and password are not filled in at startup. [At some point in the future it would be helpful to modify `{learnr}` to disable the bookmarking automatically for login controls and allow the document author to set the bookmarking policy as desired for the other components of the document.]
 
-2. `vfun <- basket::check_valid`. All of the handling of credentials and authorization (if needed) to write to the logging database is handled by a single, user-provided function accessed *via* the name `vfun`. This will be described in detail in another section. Note that the right-hand side of the assignment here does not include function-evaluation parentheses; we're giving an alias (`vfun`) to the function itself rather than evaluating the function. 
+2. `vfun <- make_basic_validator(name, secret)`. All of the handling of credentials and authorization (if needed) to write to the logging database is handled by a single, user-provided function accessed *via* the name `vfun`. This will be described in detail in another section. `make_basic_validator()` creates on such credential-handling function that is extremely simple. The first argument can  be the name of a file containing login ids and passwords. Here it is set to `NULL` to help people getting started writing with `{submitr}`. The `NULL` directs `{submitr}` to use an example credential file distributed with the package. See `system.file("credentials-example.csv", package = "submitr")`. One of the credentials contained in `credentials-example.csv` is "January"/"snow". You can look at the file to see others. **NOTE: You will certainly want to create and use your own credentials file.**
 
-3. `storage_actions` is the name holding information about the place where logged events will be stored. We'll defer details to a later section. In this example, the events are stored locally in a file named `"submissions.csv"`.
+The second  argument to `make_basic_validator()` is a character string to be used as a password for the `instructor` account. This account is used to download the accumulated submissions for grading or other purposes.
 
-4. `submitr::shiny_logic()` implements the logic needed to connect the login controls to the rest of the logging system.
+3. `storage_actions` is the name holding information about the place where logged events will be stored. We'll defer details to a later section. To make starting  out with `{submitr}` easier, we are using *local storage* of submissions. A mock submissions storage file has been included along with the .Rmd sources for minimal example. This is fine for initial playing, but once you are working with your own .Rmd file, you  will want to create a genuine file for storage. You can call this what you will. Typically, for local storage that file is placed in the same directory as the .Rmd sources for the tutorial it serves.
 
+4. `submitr::shiny_logic()` implements the logic needed to connect the login controls to the rest of the logging system. The arguments must  be named exactly as shown:  `input`, `output` and  `session` are created by `{shiny}` at runtime.
 
-## Writing to Google Sheets
-```
-  # gs4_recorder(
-  #   "1w3fEld2rZlR_6FuzvkA-viOLBA5JdqD3xHl-LuLX3-Y",
-  #   "statprep.annie@gmail.com",
-  #   vfun)
-```
+## Local storage
 
-## Setting up a class
+Local storage is very easy to use and requires only the creation of the csv file described in item (3) of the previous section. It can be very effective if the tutorial is to  be deployed on a shiny server that allows *persistent storage*. Regretably, `shinyapps.io` does not. But if you are using an institutional shiny server, you need look no further than local storage.
 
-I'll take the point of view that an instructor plans to use multiple `{learnr}` tutorials over the span of a semester, but the same procedures would apply even to a single document. These instructions would be followed once, at the start of the semester. 
+Downloading the storage file is extremely easy and works the same for all storage methods, local or not. Even people who do not have login credentials for the shiny server can access the storage file. To do this, open the tutorial in the same manner as would a student. Then give the login ID `instructor` and set the password to the second argument given to `make_basic_validator()`. (In the example file, that's "hello".) This will cause a download link to appear in the tutorial. Pressing the link and using your browser's interface for downloading files is all that's needed.
 
-First, create a CSV file to hold student ID's and passwords. The structure is very simple, e.g.
+When deploying a tutorial with local storage on a shiny server, the storage file itself is invisible to the student, as will be the information given to `make_basic_validator()`.
 
-id       |   password
----------|------------
-George   | cherry-tree
-Martha   | vernon
-Madison  | dolly
+There are two situations in which local storage will not be effective. 
 
-(An example is available in the data frame `example_credentials` provide with `{submittr}`. [MAKE SURE THIS IS UP TO DATE.])
+1. The tutorial is to  be served by `shinyapps.io` or another server that does not have persistent storage.
+2. The tutorial is to be distributed to students to run on their individual computer, for instance as part of a package. (See the [documentation on publishing tutorials](https://rstudio.github.io/learnr/publishing.html) for options.) 
 
-Notice that passwords are being stored in plain text. (This should be improved: See <https://github.com/dtkaplan/submitr/issues/1>.) As long as this is the case, don't use passwords that are intended to be secure and are used on other systems. A student ID number could make a good password, easily memorable to the student and not requiring the instructor's intervention.
-
-Second, decide how you are going to deploy the tutorial. `{Submitr}` is designed to work with three modes of deployment:
-
-1. Shinyapps.io or similar service. What's distinctive about these services is that it's not possible to store log files persistently on the server itself and that the instructor cannot directly access the Rmd and related files that are stored on the service.
-2. Another kind of Shiny server where files can be stored persistently and directly accessed by the instructor. Shiny Server is an example of such a server.
-3. Directly provided to students in source form (Rmd) to run on the student's own computer or a user-account-based web service such as `rstudio.cloud`. This includes distributing the tutorials as a package.
-
-Tutorials do not need to be written all at the same time. You may deploy tutorials for the same students in different ways, but I anticipate most instructors would follow the simplest route and use just one mode of deployment.
-
-## Storing the student activity log
-
-`{Submitr}` currently implements two modes for storing the log of activities.
-
-1. Locally, where the tutorial is deployed. This **cannot** be used on a Shinyapps.io-type server.
-2. As a Google spreadsheet. This can be used for all of the modes of deployment. Note that authentication information for the Google account used for storage will be in the source tree for the tutorial, hence accessible to whomever can access the source. If you are distributing the source files of a tutorial to students, they will therefore have access to the authentication information. On the other hand, if you are distributing source files to students, you should be in a situation where local file storage (1) can be used.
-
-## Storing user IDs and passwords
-
-Storage of user IDs and passwords is done completely separately from the logging of tutorial events. 
-
-The easiest approach to manage is to copy the id/password CSV file mentioned earlier into a Google spreadsheet. If the sheet is set to be readable by anyone with the link, you will not need authentication information for the tutorial to access the sheet. If the tutorial is being deployed on an server of any sort, the address of the sheet will not be accessible to students and the method is reasonably secure.
-
-Alternatively, you can simply store the id/password CSV file in the same folder as the Rmd for the app itself, or even create a corresponding data frame in the tutorial Rmd file itself. This approach precludes using the same id/password file for multiple tutorials. 
-
-If students will be running tutorials on their own machines (or on individual accounts on `rstudio.cloud` or the like), you may want to have all students use the same ID/password combination (e.g, `stats110::fall2020`). Each student's individual user name on the RStudio system will be included in the submission, so you can use this information, rather than the ID/password combination, to identify which submissions belong to which students.
-
-## Structure of a tutorial with `{submitr}`
-
-Start with a working tutorial document. Confirm that it works and can be deployed successfully.
-
-Now you will make some small changes to the Rmd source file for the tutorial.
-
-**In the YAML header**
-
-Add three lines identifying the tutorial. This information allows you easily to determine which submissions come from which tutorial. The lines will look like this, with a unique ID assigned by the author for each distinct tutorial:
-
-    tutorial:
-      id: "stats-101-assignment-3"
-      version: 1.2
-    
-**At the start of the document**
-
-Add a section at the start of the document that authorizes the tutorial to access the user-credential information and the log storage. For Google sheets storage, the section will 
-look like this.
-
-````
-`` `{r __login__, context = "setup"}
-instructor_key <- "something secret"
-credentials <- 
-  "1h_G3M-HTVfrC8lqHS8aKn_jVFg2_Rnnbtk5erpWX54o"
-storage_actions <- in_google_sheets(
-  "1D9kzkgUEGRvv2Q7q2n8ca9gcZk1_aglodbGJ3rLCYjI",
-  email = "statprep.annie@gmail.com")
-`` `
-````
-
-The long character strings are Google Sheets "keys," from which the URL of the credentials file and the submission storage, the means used by the `{googlesheets4}` package to read and write Google sheets.
-
-After the `__login__` chunk, add a new chunk which will always be *exactly* as follows:
-
-````
-`` `{r child=system.file("submitr_login_script.Rmd", package = "submitr")}
-```
-````
-
-To emphasize: The "child=" chunk must go after the chunk defining credentials, passwords, and the instructor key
+In these situations, storage must be arranged in another way, for example a database server. A simple server for data files is Google Sheets, which you can use with `submitr` as described in the next section.
 
 
-If you are using local file storage, replace the `storage_actions` assignment with something like this:
+## Storage with Google Sheets
+
+Many readers will be familiar with Google Sheets. If not, you can find directions and tutorial by a simple web search. This is what you will need to accomplish storage with Google Sheets.
+
+1. An account with Google. For security reasons, I encourage you to set up an account specifically and solely for the purpose of storing submissions. In the example to be given here, the account name is `statprep.annie@gmail.com`.  But you do not have access to this account, so set up your own.
+
+2. A blank spreadsheet file under the account in (1). Creating this file is a one-time operation which you can do using the browser interface to Google Sheets. You can name this file what you will, presumably a name that reminds you of the file's purpose. But for the purpose of setting up your tutorial to use that file you will need the sheet's ID. (You do not need to set up sharing for the file.)
+
+You will find the sheet's ID in the URL for the file, which will look something like this:
+
+`https://docs.google.com/spreadsheets/d/d2rZlR_1wvkA-dqD3xHl-LX3Lu-Y/edit`
+
+The ID--sometimes called a "key"--for the sheet is the random-looking sequence of letters and numbers that is a components of the URL. In this example, the ID is `"d2rZlR_1wvkA-dqD3xHl-LX3Lu-Y"`, although a real ID is about twice as long.
+
+You may want to use one Google Sheet for all your tutorials, or one sheet for the tutorials in each of your classes or course units, or even a separate sheet for each individual tutorial. Whichever you choose, you can access the submissions either directly through  the Google Sheets browser interface or, conveniently, through the tutorial itself. Doing this involves logging in to the tutorial with user ID `instructor` and the password specified in the second argument to `make_basic_validator()`.  See the instructions in the section on *local storage*.
+
+3. An access token for the account in (1). We'll discuss this in  the  next section.
+
+## The account access token
+
+Recall from part (2) of the previous section that you will have created a Google Sheet and copied out the ID. This is akin to the name of the spreadsheet file.
+
+That file is contained within  a Google account. (The one we're using for this example is `statprep.annie@gmail.com`, but you will use an account you have created for this purpose.)
+
+In order  for `{submitr}` to  be able to write to the spreadsheet, your tutorial needs to  authenticate itself to Google. That is the role of the access token, which needs to be created once for the account you are using.
+
+You create an access token by a short procedure that involves R commands which generate a browser page by which you log in to the account in a more-or-less standard way. The R commands will create a directory called `.secrets` and a file within that directory which is the token. Typically, the directory will be rooted in the same folder as the Rmd file for your tutorial. Each time you write a new `{submitr}` tutorial, you will  have to replicate the account  access token, which  can  be a simple matter of copying  the `.secrets` directory to the folder containing the new tutorials Rmd file.
+
+## Specifying Google Sheets storage for your tutorial
+
+In the section  on  *local storage*, you saw this line used to set up the tutorial.
 
 ```r
-storage_actions <- in_local_file("submissions.csv")
+storage_actions <- record_local("./minimal_submissions.csv")
 ```
-You can choose a file name other than `"submissions.csv"` and even use different files for different tutorials.
 
-If you want to use a local file to store the student credentials, do so by replacing the `credentials` line in the above with something like this:
+To specify that Google Sheets storage be used, you replace those two lines with these:
 
 ```r
-credentials <- "my_students_credentials.csv"
+storage_actions <- 
+  record_gs4(
+    key = "d2rZlR_1wvkA-dqD3xHl-LX3Lu-Y",
+    email = "statprep.annie@gmail.com",
+    vfun
+  )
 ```
 
-The CSV credentials file, if one is used, needs to be in the same directory as the tutorial's source Rmd file.
+The `key=` argument is the ID for the Google Sheet file that will store the submissions. The `email=` argument is the account name which hosts the Google Sheet file. `vfun` is the validator function created earlier in the chunk.
 
-## Downloading the submissions
+In creating `storage_actions`, the `record_gs4()` function knows to access the account access token which you will created and stored in the `.secrets` folder associated with your  Rmd tutorial source file.
 
-As students use the tutorials, their actions will be recorded in the submissions file or Google Sheet. If the tutorials are deployed via server, the instructor can access these directly, either by going to the Google Sheet or logging into the server to harvest the file.
-
-`{Submitr}` provides an additional means to download the submissions directly from the tutorial. This is helpful if there will be multiple graders or, when there are multiple tutorials, simply to help an instructor keep track of which submissions file is which.
-
-Downloading is done by a link under the login boxes. By default, the link is not accessible. To access the link, give the user ID "instructor" in the login box and the `instructor_key` (set earlier in the document) as the password. 
-
-I imagine the main use for this will be for instructors and graders, to give them access to the stored submissions for each tutorial. However, by giving students the instructor key (perhaps something obvious like `download`), students can access the submissions as well. Allowing this would make sense if students are running the tutorial on their own computers or using `rstudio.cloud` or a similar server. In this scenario, students would hand in their submissions file by, e.g., uploading it to a course support system such as Blackboard or Moodle. 
-
-## Creating and accessing a Google Sheets file
-
-If you are using local file storage for the submissions, there is no setup required. This section is about using Google Sheets to store submissions.
-
-The first step is to login to your Google Sheets account and create a blank sheet. I encourage you to create a unique sheet for each tutorial (and even from semester to semester), but you can equally well use a single sheet for all submissions. (The objective of using multiple sheets is to keep each one from getting so large that it's unwieldy.)
-
-A good way to create the Google Sheet is to upload a CSV file with the column names already initialized. Such a file is available on your system at the path produced by
-
-`system.file("submissions_header.csv", package = "submitr")`
-
-Once created, copy the "key" for the file. It's available from the URL for the sheet and will resemble the examples shown above for the `credentials <-` amd `in_google_sheets()`.
-
-Next, you need to create the authentication token to allow your tutorial to write to the submissions store sheet. You can do this from the R console.
+## Creating the `.secrets` directory containing an account access token
 
 1. Use `setwd()` in R to navigate to the folder with your tutorial's Rmd file. (Apologies to Jenny Bryan who emphasizes that this is in general a bad practice and promises to set on fire the computer of anyone who does it. Have a fire extinguisher available just in case!)
 
@@ -278,20 +214,22 @@ googlesheets4::gs4_auth(
 
 This process will create a folder named `.secrets` in the current R working directory (which will be where your tutorial's Rmd lives). That folder will have a file whose name ends in the google email address for the account in which the submissions storage sheet was created. 
 
-You will want to prevent student access to the `.secrets` folder. Deploying your app to a server will not give such access. But other things you might do can, for example using a GitHub repo without "ignoring" the folder.
+You will want to prevent student access to the `.secrets` folder. Deploying your app to a server will not give such access. But other things you might do can reveal the account access token, for example using a GitHub repo without "ignoring" the folder.
 
-4. (Optionally) Test that things are working. In the same session in which you give the commands in step (2), give the following command:
 
-`Testing <- sheets_read("1D9kzkg` ... *or, rather, the key for your own Google sheet.*`)`
 
-## Storing credentials in Google Sheets
 
-If you are using a Google account to provide the storage for submissions, you will have, following the steps in the previous section, provided access to any other sheet, including the one you create for holding credentials.
 
-But you might prefer to enable the credentials to be read from within the tutorial *without* needing a `.secrets` folder. You can accomplish this by using Google Sheets to "share" the file in read mode to anyone with the key. The key itself will be visible in the source Rmd for your tutorial, but not visible to the users of your tutorial from a server.^[This option of using "share" to provide access to the credentials sheet works because there is no need for a tutorial to *write* to a credentials file. For the submissions storage sheet, writing is essential to the task. Writing to a Google Sheet from within R requires authentication in the form of a token.]
 
-If you will be distributing your tutorials in source form, e.g. as part of a package, it's generally appropriate *not* to use Google Sheets. Instead, include the CSV credentials file directly in the *same folder* as your Rmd source.
+
 
 ## Interpreting a submissions log
 
 *At some point* I will write software to generate reports from a log, then add a shiny app into this package for that purpose.
+
+```{r eval = FALSE}
+  in_google_sheets(
+    "1w3fEld2rZlR_6FuzvkA-viOLBA5JdqD3xHl-LuLX3-Y",
+    "statprep.annie@gmail.com",
+    vfun)
+```
