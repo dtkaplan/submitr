@@ -18,14 +18,20 @@ knitr::opts_chunk$set(
 library(submitr)
 ```
 
-NOTES:
 
-- Install `googlesheets4` from GitHub, not CRAN
 
 
 The `{learnr}` package provides facilities for writing interactive R tutorials. `{submitr}` extends `{learnr}` so that tutorials can log student interaction. This can be useful for monitoring the use of a tutorial, looking for patterns in student answers, or assigning a grade to students.
 
 This vignette is oriented toward authors of `{learnr}` tutorials.
+
+## Before we get started
+
+If you are planning on logging to Google Sheets, you will need  the `googlesheets4`  package. While this is available from CRAN, as of the date of writing the CRAN version is obsolete. So make sure to install `googlesheets4` from its repository on GitHub using the command (in your R console)
+
+```r
+remotes::install_github("tidyverse/googlesheets4")
+```
 
 ## A minimal example
 
@@ -39,7 +45,7 @@ learnr::run_tutorial("minimal", package = "submitr")
 
 Each page of the tutorial is laid out in the usual manner. By default, `{learnr}` puts a table of contents in a left column. `{submitr}` adds login ID and Password fields at the top of the page. For the minimal example the ID/Password pair "Anne/demo" can be used. An event will be logged whenever you perform a "submit" or "run" action or watch the video.
 
-```{r echo=FALSE, fig.cap="Snapshot of the minimal tutorial at start-up"}
+```{r echo=FALSE, fig.cap="Snapshot of the minimal tutorial at start-up", out.width="80%"}
 knitr::include_graphics("images/minimal-first-page.png")
 ```
 
@@ -106,7 +112,7 @@ passwords for user authentication, and so on.
 
 ````
 `r ""````{r context="server", echo = FALSE}
-options(tutorial.storage = "none")
+options(tutorial.storage = "none") # for learnr
 vfun <- submitr::make_basic_validator(NULL, "hello")
 storage_actions <- submitr::record_local("./minimal_submissions.csv")
 submitr::shiny_logic(input, output, session, vfun,
@@ -195,6 +201,8 @@ In creating `storage_actions`, the `record_gs4()` function knows to access the a
 
 ## Creating the `.secrets` directory containing an account access token
 
+This is something you need to do once, from the console. 
+
 1. Use `setwd()` in R to navigate to the folder with your tutorial's Rmd file. (Apologies to Jenny Bryan who emphasizes that this is in general a bad practice and promises to set on fire the computer of anyone who does it. Have a fire extinguisher available just in case!)
 
 2. Give the following commands in the R console
@@ -212,15 +220,19 @@ googlesheets4::gs4_auth(
   token = googledrive::drive_token())
 ```
 
-This process will create a folder named `.secrets` in the current R working directory (which will be where your tutorial's Rmd lives). That folder will have a file whose name ends in the google email address for the account in which the submissions storage sheet was created. 
+This process will create a folder named `.secrets` in the current R working directory (which will be where your tutorial's Rmd lives). That folder will have a file whose name ends in the google email address for the account in which the submissions storage sheet was created. That is the account authorization token.  
 
-You will want to prevent student access to the `.secrets` folder. Deploying your app to a server will not give such access. But other things you might do can reveal the account access token, for example using a GitHub repo without "ignoring" the folder.
+Note that if you are storing your `{submitr}` tutorial in  a public place, such  as a public GitHub repository, you will want to tell git to "ignore" the `.secrets` directory.
 
+It can be helpful when  writing multiple tutorials to have the  account  authorization token stored in  a central place so that all your tutorials can use it. I have  a working but primitive prototype of  this  and will be happy  to  describe it to  potential authors on request.
 
+## Deploying your app
 
+If your app is to be deployed to a server and you are using local storage  for submissions, your security is already in place. This applies as well to  deployment  using  Google Sheets  storage on  servers without persistent storage such  as `shinyapps.io`. (But do take care not to give access  to the `.secrets` folder via your git or other repository.)
 
+If you want to deploy your tutorial in source form, for example as  part of a  package, and  have  users run the tutorial on their own systems, then you  will need to give up some security. First, remember that you   are  supposed to  set up a special-purpose Google account with no other files of value; you don't want a security breach to give access to your general-purpose account. 
 
-
+Second, contact me  about the primitive prototype mentioned in the previous section.
 
 
 ## Interpreting a submissions log
