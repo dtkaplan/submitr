@@ -64,7 +64,7 @@ Let's consider the various components of `minimal.Rmd`.
 
 As with all `{learnr}` tutorials, the source document starts with a YAML header.
 
-```{yaml}
+```yaml
 ---
 title: "A Minimal `{submitr}` Example"
 output: learnr::tutorial
