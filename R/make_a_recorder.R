@@ -28,12 +28,13 @@ make_a_recorder <- function(store_fun, submitr_id) {
                   tutorial_version,
                   user_id,
                   event, data) {
+
     # Put the elements of data into a data frame with always
     # the same names
     data$video_time <- data$time # give it a better name
     label <- ifelse("label" %in% names(data), data$label, "NA")
     comment <- val1 <- val2 <- "NA"
-    val3 <- paste(names(data), collapse = "::") # for development purposes
+    #val3 <- paste(names(data), collapse = "::") # for development purposes
     comment <- ifelse("reset" %in% names(data), "reset", comment)
     if ("video_url" %in% names(data) ) {
       comment <- "video"
@@ -53,9 +54,6 @@ make_a_recorder <- function(store_fun, submitr_id) {
         val1 <- paste(data$answer, ":::", data$correct)
       else val1 <- "reset"
       val2 <- data$question
-    } else {
-      comment = "handled field"
-      val1 <- paste(names(data), collapse = "::")
     }
 
     if (event == "exercise_result") {
@@ -63,7 +61,7 @@ make_a_recorder <- function(store_fun, submitr_id) {
     }
 
     this_event <-
-      data.frame(time = date(),
+      data.frame(time = format(Sys.time(), "%a %b %d %X %Y %z"),
                  id = paste(submitr_id, user_id),
                  session_id = session_id,
                  event = event,
@@ -71,7 +69,6 @@ make_a_recorder <- function(store_fun, submitr_id) {
                  comment = comment,
                  val1 = val1,
                  val2 = val2,
-                 val3 = val3,
                  stringsAsFactors = FALSE)
 
     ss <- store_fun(this_event)
@@ -82,9 +79,6 @@ make_a_recorder <- function(store_fun, submitr_id) {
   res # return the function just created
 }
 
-
-#' Constructors for modes for storage of submissions
-#'
 
 
 

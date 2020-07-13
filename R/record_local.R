@@ -11,7 +11,6 @@ record_local <- function(key, email = "") {
   # email is a dummy argument so that all  the recorders have the
   # same calling  interface
   append_to_file <- TRUE # this is the permanent value
-
   write <- function(this_event) {
     if (!file.exists(key)) {
       # create a new file
