@@ -1,7 +1,7 @@
 Package: submitr
 Type: Package
 Title: Handles submissions to a database of events in learnr sessions.
-Version: 0.2.2
+Version: 0.3.0.9000
 Author: Daniel Kaplan
 Maintainer: Daniel Kaplan <kaplan@macalester.edu>
 Description: The learnr tutorial system provides a hook by which user events can be logged. Submitr provides ways to connect to this hook so that events can be logged centrally, for instance to a Google Sheet.
