@@ -25,9 +25,6 @@ make_a_recorder <- function(store_fun, submitr_id) {
   # define a function  with the standard set of  arguments
   #  for a learnr  recorder.
   format_event <- function(tutorial_id, tutorial_version, user_id, event, data) {
-    Everything <- list(event, data)
-    save(Everything, file = "~/Downloads/Everything.rda")
-
     event_type <- learnr_event_type(data)
     if (event_type %in% c("unchecked-code", "trash")) return(NULL)
     this_event <- data.frame(time = format(Sys.time(), "%a %b %d %X %Y %z"),
