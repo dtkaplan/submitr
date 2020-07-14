@@ -4,7 +4,7 @@
 #' @export
 null_code_checker <- function(...) {
   goo <- list(...)
-
+  save(goo, file = "goo.rda")
   list(message = "No genuine code checking is being done.",
        correct = runif(1) > 0.5,
        location = "append")
