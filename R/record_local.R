@@ -8,10 +8,12 @@
 #'
 #' @export
 record_local <- function(key, email = "") {
+  cat("Setting up local recording.\n")
   # email is a dummy argument so that all  the recorders have the
   # same calling  interface
   append_to_file <- TRUE # this is the permanent value
   write <- function(this_event) {
+    #save(this_event, file="~/Downloads/event.rda")
     if (!file.exists(key)) {
       # create a new file
       # And some logic to put in the column names the

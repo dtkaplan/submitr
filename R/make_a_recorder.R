@@ -19,67 +19,79 @@
 #' @importFrom utils capture.output
 #'
 make_a_recorder <- function(store_fun, submitr_id) {
-  # Create a unique ID for the  IDs submitted in this  session.
+  # Create a unique ID for the each user session
   session_id <- make_session_id()
 
   # define a function  with the standard set of  arguments
   #  for a learnr  recorder.
-  res <- function(tutorial_id,
-                  tutorial_version,
-                  user_id,
-                  event, data) {
+  format_event <- function(tutorial_id, tutorial_version, user_id, event, data) {
+    Everything <- list(event, data)
+    save(Everything, file = "~/Downloads/Everything.rda")
 
-    # Put the elements of data into a data frame with always
-    # the same names
-    data$video_time <- data$time # give it a better name
-    label <- ifelse("label" %in% names(data), data$label, "NA")
-    comment <- val1 <- val2 <- "NA"
-    #val3 <- paste(names(data), collapse = "::") # for development purposes
-    comment <- ifelse("reset" %in% names(data), "reset", comment)
-    if ("video_url" %in% names(data) ) {
-      comment <- "video"
-      val1 <- data$video_url
-      val2 <- data$video_time
-    } else if ("code" %in% names(data)) {
-      comment <- "code"
-      val1 <- data$code
-    } else if ("submission" %in% names(data)){
-      comment = "code submission"
-    } else if ("sectionId" %in% names(data)) {
-      comment <- "section"
-      val1 <- data$sectionId
-    } else if ("question" %in% names(data)) {
-      comment <- "question"
-      if ("answer" %in% names(data) && "correct" %in% names(data))
-        val1 <- paste(data$answer, ":::", data$correct)
-      else val1 <- "reset"
-      val2 <- data$question
+    event_type <- learnr_event_type(data)
+    if (event_type %in% c("unchecked-code", "trash")) return(NULL)
+    this_event <- data.frame(time = format(Sys.time(), "%a %b %d %X %Y %z"),
+                             id = paste(submitr_id, user_id),
+                             session_id = session_id,
+                             event = event_type,
+                             tutorial = paste(data$label, event_type, tutorial_id, tutorial_version),
+                             stringsAsFactors = FALSE)
+    # Other fields are
+    #    prompt, answer, correct, feedback
+    if (event_type %in% c("essay", "multiple-choice")) {
+      this_event$prompt <- data$question
+      this_event$answer <- data$answer
+      if (event_type == "essay") {
+      this_event$correct <- FALSE
+      this_event$feedback <- paste(as.character(nchar(data$answer)), "chars")
+      } else {
+        this_event$correct <- data$correct
+        this_event$feedback <- "none"
+      }
+    } else if (event_type == "unchecked-code") {
+      # THIS SHOULDN'T BE RECORDED
+      stop("Attempt to record unchecked code")
+      this_event$prompt <- "None"
+      this_event$answer <- data$code
+      this_event$correct <- FALSE
+      if (!is.null(data$error_message)) this_event$feedback <- data$error_message
+      else this_event$feedback <- data$time_elapsed
+    } else if (event_type == "checked-code") {
+      this_event$prompt <- "None"
+      this_event$answer <- data$code
+      is_correct <- ifelse(is.null(data$feedback), FALSE, data$feedback$correct)
+      this_event$correct <- is_correct
+      if (!is.null(data$error_message)) this_event$feedback <- data$error_message
+      else this_event$feedback <- data$feedback$message
+    } else if (event_type == "video") {
+      this_event$prompt <- data$video_url
+      this_event$answer <- data$time
+      this_event$correct <- FALSE
+      this_event$feedback <- "watching"
     }
-
-    if (event == "exercise_result") {
-      val2 <- paste(data$checked, ":::", data$feedback)
-    }
-
-    this_event <-
-      data.frame(time = format(Sys.time(), "%a %b %d %X %Y %z"),
-                 id = paste(submitr_id, user_id),
-                 session_id = session_id,
-                 event = event,
-                 tutorial = paste(label, tutorial_id, tutorial_version),
-                 comment = comment,
-                 val1 = val1,
-                 val2 = val2,
-                 stringsAsFactors = FALSE)
-
-    ss <- store_fun(this_event)
-    #  Return something to indicate success?
+    ss <- store_fun(this_event[1,]) # [1,] just in case a field is a vector
     ss
+
   }
 
-  res # return the function just created
+  format_event # return the function just created
 }
 
+learnr_event_type <- function(data) {
+  if ("video_url" %in% names(data)) return("video")
+  if ("code" %in% names(data)) {
+    cat("Is feedback present?", "feedback" %in% names(data), "\n")
+    if (!is.null(data$feedback)) return("checked-code")
+    else return("unchecked-code")
+  }
+  if ("question" %in% names(data) && !("reset" %in% names(data))) {
+    if (grepl("Essay[0-9]+$", data$label) ||
+        grepl(" $", data$question)) return("essay")
+    else return("multiple-choice")
+  }
 
+  "trash"
+}
 
 
 

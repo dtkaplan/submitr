@@ -11,10 +11,12 @@ tutorial:
 library(learnr)
 library(submitr)
 library(basket)
+library(etude)
+library(gradethis)
 knitr::opts_chunk$set(echo = FALSE)
 learnr::tutorial_options(
   exercise.timelimit = 60, 
-  exercise.checker = submitr::null_code_checker)
+  exercise.checker = gradethis::grade_learnr) # submitr::null_code_checker)
 ```
 
 ```{r}
@@ -45,14 +47,41 @@ learnr::question("Which planet do we live on?",
 )
 ```
 
+## Essay
+
+
+```{r document_d52f3dd-Essay1, echo=FALSE}
+etude::essay_response(
+  prompt = "Write your thoughts here"
+)
+```
 
 ## Video
 
 ![Just a link](https://youtu.be/zNzZ1PfUDNk)
 
 
-## Code
+## Graded Code
 
-```{r code_sandbox, exercise=TRUE, exercise.cap="Sandbox"}
+```{r code_sandbox, exercise=TRUE, exercise.cap="Graded"}
 
 ```
+
+```{r code_sandbox-check}
+gradethis::grade_result(
+  fail_if( ~ .result != 3, "Result should have been 3."),
+  pass_if(~ TRUE, "Good for you!"),
+  glue_correct = "{.message}"
+)
+```
+
+## Ungraded Code
+
+```{r ungraded_code, exercise = TRUE, exercise.cap = "Sandbox"}
+
+```
+
+
+
+
+

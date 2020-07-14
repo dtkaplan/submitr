@@ -1,1 +1,28 @@
-"time","id","session_id","event","tutorial","comment","val1","val2","val3"
+"Mon Jul 13 17:51:32 2020 -0600","Unauthenticated April kaplan","6120256904","multiple-choice","planets multiple-choice minimal-example 0.5","Which planet do we live on?","Mars",FALSE,"none"
+"Mon Jul 13 17:51:43 2020 -0600","Unauthenticated April kaplan","6120256904","checked-code","code_sandbox checked-code minimal-example 0.5","None","2
+
+",FALSE,"Result should have been 3.  Don't give up now, try it one more time."
+"Mon Jul 13 17:52:39 2020 -0600","Unauthenticated April kaplan","6120256904","essay","document_d52f3dd-Essay1 essay minimal-example 0.5","Write your thoughts here <span title = 'document_d52f3dd-Essay1'>...</span> ","April showers bring may flowers",FALSE,"31 chars"
+"Mon Jul 13 17:53:32 2020 -0600","April kaplan","64861050151","checked-code","code_sandbox checked-code minimal-example 0.5","None","3
+
+",TRUE,"Good for you!"
+"Mon Jul 13 17:54:33 2020 -0600","January kaplan","81065389726","multiple-choice","planets multiple-choice minimal-example 0.5","Which planet do we live on?","Saturn",FALSE,"none"
+"Mon Jul 13 17:54:40 2020 -0600","January kaplan","81065389726","essay","document_d52f3dd-Essay1 essay minimal-example 0.5","Write your thoughts here <span title = 'document_d52f3dd-Essay1'>...</span> ","January is cold!",FALSE,"16 chars"
+"Mon Jul 13 17:54:45 2020 -0600","January kaplan","81065389726","checked-code","code_sandbox checked-code minimal-example 0.5","None","2
+
+",FALSE,"Result should have been 3.  Try it again. You get better each time."
+"Mon Jul 13 17:55:31 2020 -0600","February kaplan","98091042448","multiple-choice","planets multiple-choice minimal-example 0.5","Which planet do we live on?","Earth",TRUE,"none"
+"Mon Jul 13 17:55:46 2020 -0600","February kaplan","98091042448","essay","document_d52f3dd-Essay1 essay minimal-example 0.5","Write your thoughts here <span title = 'document_d52f3dd-Essay1'>...</span> ","February is cold cold cold",FALSE,"26 chars"
+"Mon Jul 13 17:55:52 2020 -0600","February kaplan","98091042448","checked-code","code_sandbox checked-code minimal-example 0.5","None","
+22
+",FALSE,"Result should have been 3.  That's okay: you learn more from mistakes than successes. Let's do it one more time."
+"Tue Jul 14 10:53:46 2020 -0600","March kaplan","10868042233","multiple-choice","planets multiple-choice minimal-example 0.5","Which planet do we live on?","Mars",FALSE,"none"
+"Tue Jul 14 10:53:55 2020 -0600","March kaplan","10868042233","essay","document_d52f3dd-Essay1 essay minimal-example 0.5","Write your thoughts here <span title = 'document_d52f3dd-Essay1'>...</span> ","These are my thoughts",FALSE,"21 chars"
+"Tue Jul 14 10:54:04 2020 -0600","March kaplan","10868042233","checked-code","code_sandbox checked-code minimal-example 0.5","None","3
+
+",TRUE,"Good for you!"
+"Tue Jul 14 10:54:27 2020 -0600","April kaplan","82109995614","multiple-choice","planets multiple-choice minimal-example 0.5","Which planet do we live on?","Earth",TRUE,"none"
+"Tue Jul 14 10:54:35 2020 -0600","April kaplan","82109995614","essay","document_d52f3dd-Essay1 essay minimal-example 0.5","Write your thoughts here <span title = 'document_d52f3dd-Essay1'>...</span> ","April is writing here",FALSE,"21 chars"
+"Tue Jul 14 10:54:43 2020 -0600","April kaplan","82109995614","checked-code","code_sandbox checked-code minimal-example 0.5","None","
+2
+",FALSE,"Result should have been 3.  Please try again."
