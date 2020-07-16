@@ -9,6 +9,11 @@
 #' @export
 record_gs4  <-  function(key, email, auth_fun = submitr:::auth_gs4) {
   initialized <- FALSE # shared among all three functions
+  local_env <- new.env()
+  local_env$sofar <- data.frame(stringsAsFactors = FALSE)
+  # a data frame to store submissions within
+  # the app itself, for later sending to
+  # an external database
 
   do_initialization <- function() {
     # Authorize the request
@@ -18,17 +23,40 @@ record_gs4  <-  function(key, email, auth_fun = submitr:::auth_gs4) {
   }
   write <- function(this_event) {
     if (!initialized) do_initialization()
-    res <- suppressMessages(
-      googlesheets4::sheet_append(key, this_event)
-    )
+    # Cache the events so fewer requests are made to Google
+    tmp <- local_env$sofar
+    tmp <- rbind(tmp, this_event)
+    assign("sofar", tmp, envir = local_env)
+    if (nrow(tmp) >= 5) {
+      suppressMessages(
+         googlesheets4::sheet_append(key, tmp)
+      )
+      local_env$sofar <- data.frame(stringsAsFactors = FALSE)
+    }
+    # res <- suppressMessages(
+    #   googlesheets4::sheet_append(key, this_event)
+    # )
+
+    res <- this_event
     return(res)
+  }
+  flush <- function() {
+    tmp <- local_env$sofar
+    if (nrow(tmp) > 0) {
+      suppressMessages(
+        googlesheets4::sheet_append(key, tmp)
+      )
+      local_env$sofar <- data.frame(stringsAsFactors = FALSE)
+    }
   }
   read_submissions <- function(fname) {
     if (!initialized) do_initialization()
     contents <- googlesheets4::range_read(key)
-    write.csv(contents, file = fname, row.names=FALSE)
+    write.csv(contents,
+              file = fname, row.names=FALSE)
   }
-  list(write = write, read_submissions = read_submissions)
+  list(write = write, read_submissions = read_submissions,
+       flush = flush)
 }
 
 # default authorizing using cached credential

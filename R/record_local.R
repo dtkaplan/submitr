@@ -25,6 +25,7 @@ record_local <- function(key, email = "") {
                 qmethod  = "escape",
                 col.names = !append_to_file, row.names = FALSE)
   }
+  flush <- function() NULL   # no need to do anything here
   read_submissions <- function(fname) { # return a local file name
     file.copy(key, fname, overwrite =  TRUE)
   }

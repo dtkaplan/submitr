@@ -3,13 +3,33 @@
 #' @export
 login_controls <- function(){
   knitr::asis_output(
-    "<table><tr></td><div id=\"login_message\" class=\"shiny-text-output\"></td></tr><tr><td>ID:</td><td><input id=\"userID\" type=\"text\" class=\"form-control\" value=\"\"/></td><td>     Password:</td><td><input id=\"password\" type=\"password\" class=\"form-control\" value=\"\" /></td><td></td></tr><tr><td></td><td><div id=\"download\" class=\"shiny-html-output\"><div></td></tr></table>"
-  )
+    #"<table><tr></td><div id=\"login_message\" class=\"shiny-text-output\"></td></tr><tr><td>ID:</td><td><input id=\"userID\" type=\"text\" class=\"form-control\" value=\"\"/></td><td>     Password:</td><td><input id=\"password\" type=\"password\" class=\"form-control\" value=\"\" /></td><td></td></tr><tr><td></td><td><div id=\"download\" class=\"shiny-html-output\"><div></td></tr></table>"
+    paste(
+      "<table><tr>",
+      "<td colspan=3><span id=\"login_message\" class=\"shiny-text-output\"></td></tr>",
+      "<tr><td>ID:</td><td><input id=\"userID\" type=\"text\" class=\"form-control\" value=\"\"/></td>",
+      "<td>     Password:</td><td><input id=\"password\" type=\"password\" class=\"form-control\" value=\"\" /></td>",
+      "<td>     <button id=\"flush\" type=\"button\" class=\"btn btn-default action-button\">Submit your work</button></td>",
+      "<td></td></tr>",
+      "<tr><td></td><td><div id=\"download\" class=\"shiny-html-output\"><div></td>",
+      "</tr></table>",
+      collapse = "")
+      )
 }
 
 #' @export
 shiny_logic <- function(input, output, session,
                         vfun, storage_actions) {
+
+  observe({
+    req(input$flush)
+    storage_actions$flush()
+    showModal(modalDialog(
+      p("Your previous answers have been submitted."),
+      p("You can wait until you are done with your present session before pressing 'Submit' again."),
+      title = "Submitted work."
+    ))
+  })
   observe({
     if (vfun(input$userID,  "i", input$password)) {
       output$download <- renderUI(downloadLink("get_submissions",
