@@ -11,6 +11,7 @@ record_gs4  <-  function(key, email, auth_fun = submitr:::auth_gs4) {
   initialized <- FALSE # shared among all three functions
   local_env <- new.env()
   local_env$sofar <- data.frame(stringsAsFactors = FALSE)
+  local_env$for_hash <- data.frame(stringsAsFactors = FALSE)
   # a data frame to store submissions within
   # the app itself, for later sending to
   # an external database
@@ -25,8 +26,11 @@ record_gs4  <-  function(key, email, auth_fun = submitr:::auth_gs4) {
     if (!initialized) do_initialization()
     # Cache the events so fewer requests are made to Google
     tmp <- local_env$sofar
+    for_hash <- local_env$for_hash
     tmp <- rbind(tmp, this_event)
+    for_hash <- rbind(for_hash, this_event)
     assign("sofar", tmp, envir = local_env)
+    assign("for_hash", for_hash, envir = local_env)
     if (nrow(tmp) >= 5) {
       suppressMessages(
          googlesheets4::sheet_append(key, tmp)
@@ -40,6 +44,9 @@ record_gs4  <-  function(key, email, auth_fun = submitr:::auth_gs4) {
     res <- this_event
     return(res)
   }
+  # create a hash code summarizing all the events
+  get_events <- function() local_env$for_hash
+
   flush <- function() {
     tmp <- local_env$sofar
     if (nrow(tmp) > 0) {
@@ -56,7 +63,7 @@ record_gs4  <-  function(key, email, auth_fun = submitr:::auth_gs4) {
               file = fname, row.names=FALSE)
   }
   list(write = write, read_submissions = read_submissions,
-       flush = flush)
+       flush = flush, get_events = get_events)
 }
 
 # default authorizing using cached credential

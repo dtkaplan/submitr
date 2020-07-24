@@ -1,0 +1,62 @@
+---
+title: "Untitled"
+subtitle: "Subtitle"
+output: learnr::tutorial
+tutorial:
+  id: "Globally_Unique_ID"
+  version: 0.1
+runtime: shiny_prerendered
+date: ""
+tags: [first, second, third]
+id: fish-walk-dog
+---
+
+```{r include = FALSE, context = "setup"}
+# Note the context="setup". That's so that the question_ui_initialize methods from etude will be registered.
+library(mosaic)
+library(mosaicCalc)
+library(ggformula)
+library(math141Z)
+library(etude)  
+library(learnr)
+library(gradethis)
+library(submitr)
+library(learnrhash) 
+
+learnr::tutorial_options(exercise.timelimit = 60,
+                 exercise.checker = gradethis::grade_learnr)
+```
+
+```{r echo=FALSE}
+submitr::hash_controls(url = "https://docs.google.com/forms/d/e/1FAIpQLSe47BLaxC9NRees2BKDoeSSwWv1wdcRRsEj6HbByb99rXxdig/viewform?usp=sf_link")
+```
+
+```{r context="server", echo = FALSE}
+submitr::hash_logic(input, output, session)
+```
+
+
+## Welcome
+
+Use `{etude}` to generate chunks like this. The chunk ID will
+be matched to the document with a suffix that's unique within the document.
+
+```{r fish-walk-dog-QA1, echo=FALSE}
+# indicate correct choices with +_+ in the name of the list item.
+etude::choose_one(
+  prompt = "Which of these letters is a vowel?",  
+  choices = list( 
+    "+A+" = "Impressive. I've got nothing more to say.", 
+    "B" = "B's a consonant, Bub.",
+    "C" = "C is a consonant, Chub",
+    "D" = "D is a consonant, Dear"
+  ),
+  random_answer_order = FALSE
+)
+```
+
+
+
+
+
+
