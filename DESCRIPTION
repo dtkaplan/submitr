@@ -15,7 +15,8 @@ Imports: learnr,
          jsonlite,
          shiny,
          knitr,
-         clipr
+         clipr,
+         rclipboard
 Remotes: tidyverse/googlesheets4
 Extends: learnr
 RoxygenNote: 7.1.0
