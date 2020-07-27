@@ -2,11 +2,13 @@
 #'
 #' @export
 hash_controls <- function(url) {
+  rclipboard::rclipboardSetup()
   shiny::tags$div(
     shiny::tags$h3(
       shiny::tags$a("Link to submit your work", href=url, target="_blank")
     ),
     shiny::tags$br(),
+    uiOutput("clipboard"),
     htmlOutput("hash_output"),
     shiny::actionButton("hash_copy", "Start submission process."),
 
@@ -27,10 +29,11 @@ hash_logic <- function(input, output, session,
   message_for_submit <- reactiveVal("")
   time_hash_created <- reactiveVal(Sys.time())
 
-
-  observeEvent(input$hash_copy, {
-    clipr::write_clip(get_hash(), allow_non_interactive = TRUE)
-  })
+  # This was taken out when the clipbutton system was added
+  # to shift the work to JavaScript
+  # observeEvent(input$hash_copy, {
+  #   clipr::write_clip(get_hash(), allow_non_interactive = TRUE)
+  # })
 
   observe({
     invalidateLater(5000, session)
@@ -56,5 +59,10 @@ hash_logic <- function(input, output, session,
   output$hash_output <- renderText({
     HTML(message_for_submit())
       })
+
+    output$clipboard <- renderUI({
+      message_for_submit() # for the dependency
+      rclipboard::rclipButton("clipbtn", "Copy work to clipboard", get_hash(), icon("clipboard"))
+    })
 }
 
