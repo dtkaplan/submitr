@@ -26,7 +26,7 @@ library(learnrhash)
 learnr::tutorial_options(exercise.timelimit = 60,
                  exercise.checker = gradethis::grade_learnr)
 ```
-
+`
 ```{r echo=FALSE}
 submitr::hash_controls(url = "https://docs.google.com/forms/d/e/1FAIpQLSe47BLaxC9NRees2BKDoeSSwWv1wdcRRsEj6HbByb99rXxdig/viewform?usp=sf_link")
 ```
@@ -55,6 +55,22 @@ etude::choose_one(
 )
 ```
 
+
+<span title='fish-walk-dog-E1'>...</span>
+```{r fish-walk-dog-E1, exercise=TRUE, exercise.cap="Sandbox", exercise.setup="fish-walk-dog-E1-setup", exercise.eval=FALSE, exercise.lines=2, exercise.completion=FALSE, exercise.startover=TRUE, exercise.diagnostics=TRUE}
+x <- 159
+nrow(iris)
+iris
+```
+
+
+```{r fish-walk-dog-E1-check}
+gradethis::grade_result(
+
+  fail_if( ~ is.data.frame(.result), message = paste("Random answer", runif(1))),
+  pass_if( ~ TRUE)
+)
+```
 
 
 

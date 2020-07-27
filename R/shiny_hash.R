@@ -8,11 +8,18 @@ hash_controls <- function(url) {
       shiny::tags$a("Link to submit your work", href=url, target="_blank")
     ),
     shiny::tags$br(),
-    uiOutput("clipboard"),
-    htmlOutput("hash_output"),
-    shiny::actionButton("hash_copy", "Start submission process."),
-
+    wrapped_verbatim_text_output("show_hash", placeholder = TRUE),
+    # htmlOutput("hash_output"),
+    #shiny::actionButton("hash_copy", "Start submission process."),
   )
+}
+
+# From learnrhash
+wrapped_verbatim_text_output = function(outputId, placeholder = FALSE) {
+  x = shiny::verbatimTextOutput(outputId, placeholder)
+  x$attribs$style = "white-space: pre-wrap;"
+
+  x
 }
 
 #' @export
@@ -22,47 +29,20 @@ hash_logic <- function(input, output, session,
   options(tutorial.event_recorder =
             make_a_recorder(storage_actions$write, "from_hash"))
 
-  get_hash <- eventReactive(input$hash_copy, {
+
+  get_hash <- reactive({
+    invalidateLater(5000, session)
     learnrhash::encode_obj(storage_actions$get_events())
   })
 
-  message_for_submit <- reactiveVal("")
-  time_hash_created <- reactiveVal(Sys.time())
-
-  # This was taken out when the clipbutton system was added
-  # to shift the work to JavaScript
-  # observeEvent(input$hash_copy, {
-  #   clipr::write_clip(get_hash(), allow_non_interactive = TRUE)
-  # })
+  hash_contents_to_show <- reactiveVal("")
 
   observe({
-    invalidateLater(5000, session)
-    if (input$hash_copy == 0 || as.numeric(Sys.time() - time_hash_created()) > 20)
-      message_for_submit("")
-    else if (as.numeric(Sys.time() - time_hash_created()) > 10)
-      message_for_submit("<p>Turning off the message, but the clipboard still has the submissions to be uploaded to the above link.</p>")
+    hash_contents_to_show(get_hash())
   })
 
-  observe({
-    hash <- get_hash()
-    res <- paste0(
-      "<p>Your work has been copied to the clipboard as a compressed string. Follow ",
-      "the link above and paste your clipboard contents at that site.</p>",
-      "<p>The clipboard will look like <code>",
-      substr(hash, 0, 20), "</code> with ",
-      nchar(hash), " characters altogether.",
-      "It currently contains ", nrow(storage_actions$get_events()), " submission events.</p>")
-    message_for_submit(res)
-    time_hash_created(Sys.time())
+  output$show_hash <- renderText({
+    hash_contents_to_show()
   })
-
-  output$hash_output <- renderText({
-    HTML(message_for_submit())
-      })
-
-    output$clipboard <- renderUI({
-      message_for_submit() # for the dependency
-      rclipboard::rclipButton("clipbtn", "Copy work to clipboard", get_hash(), icon("clipboard"))
-    })
 }
 
