@@ -4,7 +4,12 @@
 \alias{hash_controls}
 \title{Shiny ui and server logic for the learnrhash submission system.}
 \usage{
-hash_controls(url)
+hash_controls(url, authentication = FALSE)
+}
+\arguments{
+\item{url}{A URL to display indicating where students should hand-in their hash codes}
+
+\item{authentication}{Flag (`FALSE`). Whether to display text-entry boxes for entering a user  ID and an authentication code.}
 }
 \description{
 Shiny ui and server logic for the learnrhash submission system.
