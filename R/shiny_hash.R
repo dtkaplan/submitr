@@ -25,13 +25,16 @@ hash_controls <- function(url, authentication = FALSE) {
     )
   }
   rclipboard::rclipboardSetup()
-  shiny::tags$div(
-    auth_boxes,
-    shiny::tags$br(),
-    wrapped_verbatim_text_output("show_hash", placeholder = TRUE),
-    # htmlOutput("hash_output"),
-    #shiny::actionButton("hash_copy", "Start submission process."),
+  shiny::tagList(
+    shiny::tags$div(
+      auth_boxes,
+      shiny::tags$br(),
+      wrapped_verbatim_text_output("show_hash", placeholder = TRUE)
+    ),
+    textOutput("submission_count"),
   )
+  # htmlOutput("hash_output"),
+  #shiny::actionButton("hash_copy", "Start submission process.")
 }
 
 
@@ -51,9 +54,17 @@ hash_logic <- function(input, output, session,
             make_a_recorder(storage_actions$write, "from_hash"))
 
 
-  get_hash <- reactive({
-    invalidateLater(5000, session)
+  output$submission_count <- renderText({
+    invalidateLater(2000, session)
     Events <- storage_actions$get_events()
+    cat("There are", nrow(Events), "events \n")
+    paste(nrow(Events), "new submission events in this session.")
+  })
+
+  get_hash <- reactive({
+    invalidateLater(2000, session)
+    Events <- storage_actions$get_events()
+    if (nrow(Events) == 0) return("Session initialized.")
     if ("UserID" %in% names(input))
       Events$user_id <- rep(input$UserID,  nrow(Events))
     if ("Authentication" %in% names(input))
