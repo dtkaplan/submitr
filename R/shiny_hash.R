@@ -55,10 +55,9 @@ hash_logic <- function(input, output, session,
 
 
   output$submission_count <- renderText({
-    invalidateLater(2000, session)
+    invalidateLater(4000, session)
     Events <- storage_actions$get_events()
-    cat("There are", nrow(Events), "events \n")
-    paste(nrow(Events), "new submission events in this session.")
+    paste(nrow(Events), "new submission events in this hash code.")
   })
 
   get_hash <- reactive({
